@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { store } from '../store'
+import { getDatabase, ref, set } from 'firebase/database';
 
 const auth = getAuth() 
 
@@ -26,9 +27,16 @@ export default {
             .then((userCredential) => {
             // Signed up
             store.setSignedIn(true)
-            console.log(store.signedIn)
             const user = userCredential.user;
-            // ...
+            const uid = user.uid
+
+            const db = getDatabase()
+            set(ref(db, 'data/users/' + uid), {
+                username: '',
+                email: this.email,
+                profile_picture : '',
+                game_collection: {}
+  });
         })
         .catch((error) => {
             const errorCode = error.code;

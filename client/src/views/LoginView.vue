@@ -1,8 +1,7 @@
 <script>
-import { store } from '../store'
-import { RouterLink } from 'vue-router'
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { useCurrentUser, useFirebaseAuth } from 'vuefire'
+import { getDatabase, ref, child, get } from "firebase/database";
+import { store } from '../store'
 
 const provider = new GoogleAuthProvider();
 

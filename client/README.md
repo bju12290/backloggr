@@ -3,13 +3,13 @@
  - Initalize Planned Technologies
     - Firebase
         - User Authentication :white_check_mark:
-        - Firebase Realtime Database
+        - Firebase Realtime Database :white_check_mark:
         - Firebase hosting :white_check_mark:
+ - Create Database Structure for Users Video Game Collection Tracking :white_check_mark: as Well as Database Security Logic :white_check_mark:
  - Connect to the APIs you plan to use
     - Need a Video Game Database API
     - SteamGridDB API
     - Time To Beat API
- - Create Database Structure for Users Video Game Collection Tracking
  - Create Page to Add Video Game to Collection
     - Auto-Suggest Functionality
     - Way to Track Status in Collection, ie: Finished, Backlog, Dropped. Optional Input
