@@ -41,6 +41,22 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/CollectionManagerView.vue')
     },
+    {
+      path: '/game/:gameId',
+      name: 'game',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/GameView.vue')
+    },
+    {
+      path: '/usersettings',
+      name: 'user-settings',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/UserSettingsView.vue')
+    }
   ]
 })
 

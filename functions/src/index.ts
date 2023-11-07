@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 const path = require('path');
+const cors = require('cors')({ origin: true });
 
 const { defineString } = require('firebase-functions/params');
 const admin = require('firebase-admin');
@@ -55,6 +56,7 @@ export const getTwitchAccessToken = functions.https.onRequest(async (request, re
 
 export const getGameData = functions.https.onRequest(async (request, response) => {
     try {
+      await cors(request, response, async () => {
         const accessTokenSnapshot = await twitchAccessTokenRef.once('value');
         const twitchAccessToken = accessTokenSnapshot.val();
       if (!twitchAccessToken) {
@@ -64,21 +66,25 @@ export const getGameData = functions.https.onRequest(async (request, response) =
 
       const client_id = twitchClientId.value()
   
-      const igdbApiUrl = 'https://api.igdb.com/v4/games';
+      const igdbApiUrl = 'https://api.igdb.com/v4/search';
   
       const headers = {
         'Client-ID': client_id,
         'Authorization': `Bearer ${twitchAccessToken}`,
       };
+
+      const userQuery = request.query.query;
+      console.log(userQuery)
   
-      const requestBody = 'fields *; limit 10;';
+      const requestBody = `fields name; limit 10; search "${userQuery}";`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   
       response.json(igdbResponse.data);
+    })
     } catch (error) {
       console.error('Error obtaining IGDB data:', error);
-      response.status(500).json({ error: 'Internal Server Error' });
+      response.status(500).json({ error: 'Internal Server Error', message: 'An error occurred while processing your request.' });
     }
   });
 
