@@ -6,11 +6,11 @@
         - Firebase Realtime Database :white_check_mark:
         - Firebase hosting :white_check_mark:
  - Create Database Structure for Users Video Game Collection Tracking :white_check_mark: as Well as Database Security Logic :white_check_mark:
- - Connect to the APIs you plan to use
-    - Need a Video Game Database API
-    - SteamGridDB API
-    - Time To Beat API
- - Create Page to Add Video Game to Collection
+ - Connect to the APIs you plan to use :white_check_mark:
+    - Need a Video Game Database API :white_check_mark:
+    - SteamGridDB API :white_check_mark:
+    - Time To Beat API (Doesn't exist yet, but IGDB does provide time to beat for some games) :white_check_mark:
+ - Create Page to Manage Video Game to Collection
     - Auto-Suggest Functionality
     - Way to Track Status in Collection, ie: Finished, Backlog, Dropped. Optional Input
  - Create Page to Display Collection (preferably one that the user can share with others)
