@@ -54,6 +54,8 @@
                         :class="{ 'font-medium': selected, 'font-normal': !selected }"
                         >
                         {{ game.name }}
+                        <img :src="game.artType.data.length > 0 ? game.artType.data[0].url : ''"/>
+                        
                         </span>
                         <span
                         v-if="selected"
@@ -83,8 +85,6 @@
   } from '@headlessui/vue'
   import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
-  let searchResults = ref([])
-
   const people = [
     { id: 1, name: 'Wade Cooper' },
     { id: 2, name: 'Arlene Mccoy' },
@@ -97,18 +97,61 @@
   let query = ref('')
   console.log(query.value)
 
+  let debounceTimeout = null;
+
+  const debounce = (fn, delay) => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+    debounceTimeout = setTimeout(fn, delay);
+  };
+
+  let searchResults = ref([])
   
   const searchGames = () => {
-  // Make a request to the Firebase Function with the user's query (query.value)
-  fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${query.value}`)
-    .then((response) => response.json())
-    .then((data) => {
-      // Update the search results with the response from the server
-      searchResults.value = data
-        console.log(searchResults.value)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+  searchResults = ref([]);
+  debounce(() => {
+    const queryValue = query.value; // Get the user's query
+    // Make a request to the IGDB API
+    fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${queryValue}`)
+      .then((response) => response.json())
+      .then(async (gameData) => {
+        // Create an array to store the promises for fetching artwork
+        const promises = gameData.map(async (game) => {
+          const gameName = game.name;
+
+          // Make a request to the SteamGridDB API to get SteamGridDB data
+          const steamGridDBResponse = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getSteamGridDBData?query=${gameName}`);
+          const steamGridDBData = await steamGridDBResponse.json();
+          game.steamGridDBData = steamGridDBData; // Associate the SteamGridDB data with the search result
+
+          return game;
+        });
+
+
+        // Use Promise.all to fetch SteamGridDB data for all games
+        const resultsWithSteamGridDB = await Promise.all(promises);
+
+        // Now, create new promises to fetch the correct art type for each game
+        const artTypePromises = resultsWithSteamGridDB.map(async (game) => {
+            console.log(game)
+          if (game.steamGridDBData.data && game.steamGridDBData.data.length > 0) {
+            const artTypeResponse = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGrid?query=${game.steamGridDBData.data[0].id}`);
+            const artTypeData = await artTypeResponse.json();
+            game.artType = artTypeData;
+          }
+          return game;
+        });
+
+        // Use Promise.all to fetch the correct art type for all games
+        const resultsWithArtType = await Promise.all(artTypePromises);
+
+        searchResults.value = resultsWithArtType;
+        console.log(searchResults.value);
+      })
+      .catch((error) => {
+        console.error('Error fetching game data:', error);
+      });
+  }, 500);
 };
   </script>

@@ -66,7 +66,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
 
       const client_id = twitchClientId.value()
   
-      const igdbApiUrl = 'https://api.igdb.com/v4/search';
+      const igdbApiUrl = 'https://api.igdb.com/v4/games';
   
       const headers = {
         'Client-ID': client_id,
@@ -76,7 +76,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       const userQuery = request.query.query;
       console.log(userQuery)
   
-      const requestBody = `fields name; limit 10; search "${userQuery}";`;
+      const requestBody = `fields name; limit 5; search "${userQuery}";`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   
@@ -88,10 +88,12 @@ export const getGameData = functions.https.onRequest(async (request, response) =
     }
   });
 
-export const getGrids = functions.https.onRequest(async (request, response) => {
+export const getSteamGridDBData = functions.https.onRequest(async (request, response) => {
   try {
+    await cors(request, response, async () => {
     const api_key = steamGridAPIKey.value()
-    const steamGridUrl = 'https://www.steamgriddb.com/api/v2/search/autocomplete/Counter-Strike'
+    const gameName = request.query.query
+    const steamGridUrl = `https://www.steamgriddb.com/api/v2/search/autocomplete/${gameName}`
 
     const headers = {
       'Authorization': `Bearer ${api_key}`
@@ -99,8 +101,28 @@ export const getGrids = functions.https.onRequest(async (request, response) => {
 
     const sgdbResponse = await axios.get(steamGridUrl, { headers })
     response.json(sgdbResponse.data)
+  })
   } catch (error) {
     console.error('Error obtaining SGDB data', error)
     response.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+export const getGrid = functions.https.onRequest(async (request, response) => {
+  try {
+    await cors(request, response, async () => {
+      const api_key=steamGridAPIKey.value()
+      const gameId = request.query.query
+      const steamGridUrl = `https://www.steamgriddb.com/api/v2/grids/game/${gameId}`
+
+      const headers = {
+        'Authorization': `Bearer ${api_key}`
+      }
+      const sgdbResponse = await axios.get(steamGridUrl, { headers })
+      response.json(sgdbResponse.data)
+    })
+  } catch (error) {
+    console.error('Error obtaing SGDB grid', error)
+    response.status(500).json({ error: 'Internal Server Error' })
   }
 })
