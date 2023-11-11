@@ -74,9 +74,9 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       };
 
       const userQuery = request.query.query;
-      console.log(userQuery)
-  
-      const requestBody = `fields name; limit 5; search "${userQuery}";`;
+      const searchLimit = request.query.limit
+
+      const requestBody = `fields name, release_dates, total_rating, summary; limit ${searchLimit}; search "${userQuery}";`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   

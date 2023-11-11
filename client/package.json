@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/line-clamp": "^0.4.4",
     "firebase": "^10.5.2",
     "vue": "^3.3.4",
     "vue-google-signin-button": "^1.0.4",

@@ -1,6 +1,6 @@
 
 <template>
-    <div class="fixed top-16 w-72">
+    <div class="fixed top-16 w-full">
       <Combobox v-model="query">
         <div class="relative mt-1">
           <div
@@ -26,7 +26,7 @@
             leaveTo="opacity-0"
           >
             <ComboboxOptions
-              class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+              class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
             >
               <!-- <div
                 v-if="filteredPeople.length === 0 && query !== ''"
@@ -50,12 +50,21 @@
                         }"
                     >
                         <span
-                        class="block truncate"
-                        :class="{ 'font-medium': selected, 'font-normal': !selected }"
+                        class="block truncate text-xl"
+                        :class="{ 'font-bold': selected, 'font-semibold': !selected }"
                         >
-                        {{ game.name }}
-                        <img :src="game.artType.data.length > 0 ? game.artType.data[0].url : ''"/>
-                        
+                        <div class="grid grid-cols-2 justify-items-center place-items-center">
+                          <div class="justify-self-start">
+                              <p>{{ game.name }}</p>
+                              <p>{{ game.release_dates[0] }}</p>
+                              <p class="whitespace-normal font-thin line-clamp-3">{{ game.summary }}</p>
+                              <p class="font-thin">Review Score: <span class="font-medium">{{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</span></p>
+                              <button class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Add to Collection</button>
+                          </div>
+                          <div>
+                            <img class="max-h-60 place-self-auto" :src="game.artType.data.length > 0 ? game.artType.data[0].url : ''"/>
+                          </div>
+                        </div>
                         </span>
                         <span
                         v-if="selected"
@@ -66,6 +75,7 @@
                         </span>
                     </li>
                     </ComboboxOption>
+                    <hr>
             </ComboboxOptions>
           </TransitionRoot>
         </div>
@@ -112,8 +122,9 @@
   searchResults = ref([]);
   debounce(() => {
     const queryValue = query.value; // Get the user's query
+    const searchLimit = 5
     // Make a request to the IGDB API
-    fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${queryValue}`)
+    fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${queryValue}&limit=${searchLimit}`)
       .then((response) => response.json())
       .then(async (gameData) => {
         // Create an array to store the promises for fetching artwork
