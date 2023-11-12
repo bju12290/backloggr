@@ -4,7 +4,6 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { RouterLink } from 'vue-router'
 import { store } from '../store.js'
 import { signOut } from "firebase/auth";
-
 import { ref } from 'vue';
 import { auth } from '../main';
 

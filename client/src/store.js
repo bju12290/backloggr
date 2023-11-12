@@ -5,5 +5,10 @@ export const store = reactive({
     setSignedIn(status) {
         this.signedIn = status
         console.log(status)
-    }
+    },
+    userData: {},
+    uid: '',
+    setUid(userId) {
+        this.uid = userId
+    },
 })

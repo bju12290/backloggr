@@ -76,7 +76,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       const userQuery = request.query.query;
       const searchLimit = request.query.limit
 
-      const requestBody = `fields name, release_dates, total_rating, summary; limit ${searchLimit}; search "${userQuery}";`;
+      const requestBody = `fields name, first_release_date, total_rating, summary; limit ${searchLimit}; search "${userQuery}"; where version_parent = null;`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   
@@ -113,7 +113,7 @@ export const getGrid = functions.https.onRequest(async (request, response) => {
     await cors(request, response, async () => {
       const api_key=steamGridAPIKey.value()
       const gameId = request.query.query
-      const steamGridUrl = `https://www.steamgriddb.com/api/v2/grids/game/${gameId}`
+      const steamGridUrl = `https://www.steamgriddb.com/api/v2/grids/game/${gameId}?dimensions=600x900`
 
       const headers = {
         'Authorization': `Bearer ${api_key}`

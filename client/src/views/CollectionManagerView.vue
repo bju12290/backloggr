@@ -1,7 +1,20 @@
+<!-- 
+  
+  TODO: 
+    - Add Loading Animation for Search Bar :check:
+    - Add Status Functionality to Search Bar 
+    - Add Functionality to Add Collection Item to Database
+    - Add Collection Items Underneath Search Bar
+    - Add Ability to Change Game Status Under Each Game
+    - Add Ability to Remove Game From Collection
+    - Add Ability to Select Platform
+    - Add "Get Collection Link" So Users Can Share Collection With Friends
+
+-->
 
 <template>
-    <div class="fixed top-16 w-full">
-      <Combobox v-model="query">
+    <div class="relative m-auto top-7 max-lg:w-full w-1/2 center">
+      <Combobox v-model="query" v-slot="{ open }">
         <div class="relative mt-1">
           <div
             class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
@@ -20,6 +33,7 @@
               />
             </ComboboxButton>
           </div>
+          <div v-show="open">
           <TransitionRoot
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
@@ -28,19 +42,16 @@
             <ComboboxOptions
               class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
             >
-              <!-- <div
-                v-if="filteredPeople.length === 0 && query !== ''"
-                class="relative cursor-default select-none py-2 px-4 text-gray-700"
-              >
-                Nothing found.
-              </div> -->
-  
-              <ComboboxOption
+            <div v-if="loading" class="flex flex-col items-center justify-center h-full">
+                <pacman-loader></pacman-loader>
+                <p>Loading</p>
+            </div>
+            <div v-else>
+              <div
                     v-for="game in searchResults"
                     as="template"
-                    :key="game.id"
+                    :key="game?.id"
                     :value="game"
-                    v-slot="{ selected, active }"
                     >
                     <li
                         class="relative cursor-default select-none py-2 pl-10 pr-4"
@@ -54,15 +65,32 @@
                         :class="{ 'font-bold': selected, 'font-semibold': !selected }"
                         >
                         <div class="grid grid-cols-2 justify-items-center place-items-center">
-                          <div class="justify-self-start">
-                              <p>{{ game.name }}</p>
-                              <p>{{ game.release_dates[0] }}</p>
-                              <p class="whitespace-normal font-thin line-clamp-3">{{ game.summary }}</p>
+                          <div class="flex flex-col whitespace-normal max-sm:w-40 max-md:w-64 justify-self-start">
+                              <p>{{ game?.name }}</p>
+                              <p class="font-thin">{{ new Date(game?.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
+                              <hr />
+                              <p class="font-thin line-clamp-3">{{ game?.summary }}</p>
+                              <hr />
                               <p class="font-thin">Review Score: <span class="font-medium">{{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</span></p>
-                              <button class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Add to Collection</button>
+                              <form class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
+                                <input id="playing" name="status" value="playing" type="radio" :checked="selectedStatus === 'playing'" @change="handleRadioChange('playing')"/>
+                                <label for="playing">Playing</label>
+                                
+                                <input id="completed" name="status" value="completed" type="radio" :checked="selectedStatus === 'completed'" @change="handleRadioChange('completed')"/>
+                                <label for="completed">Completed</label>
+                                
+                                <input id="backlog" name="status" value="backlog" type="radio" :checked="selectedStatus === 'backlog'" @change="handleRadioChange('backlog')"/>
+                                <label for="backlog">Backlog</label>
+                                
+                                <div class="flex gap-2">
+                                  <input id="dropped" name="status" value="dropped" type="radio" :checked="selectedStatus === 'dropped'" @change="handleRadioChange('dropped')"/>
+                                  <label for="dropped">Dropped</label>
+                                </div>
+                              </form>
+                              <button @click="handleAddToCollection(game.id, game.name, selectedStatus)" class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 ms-1 mt-2 mb-2">Add to Collection</button>
                           </div>
                           <div>
-                            <img class="max-h-60 place-self-auto" :src="game.artType.data.length > 0 ? game.artType.data[0].url : ''"/>
+                            <img class="max-h-60 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/>
                           </div>
                         </div>
                         </span>
@@ -74,10 +102,12 @@
                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                         </span>
                     </li>
-                    </ComboboxOption>
+                    </div>
                     <hr>
+                  </div>
             </ComboboxOptions>
           </TransitionRoot>
+        </div>
         </div>
       </Combobox>
     </div>
@@ -94,18 +124,19 @@
     TransitionRoot,
   } from '@headlessui/vue'
   import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+  import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
+  import { getDatabase, ref as dbRef, set, get } from "firebase/database";
+  import { store } from '../store'
 
-  const people = [
-    { id: 1, name: 'Wade Cooper' },
-    { id: 2, name: 'Arlene Mccoy' },
-    { id: 3, name: 'Devon Webb' },
-    { id: 4, name: 'Tom Cook' },
-    { id: 5, name: 'Tanya Fox' },
-    { id: 6, name: 'Hellen Schmidt' },
-  ]
+  const loading = ref(false)
+
+  const selectedStatus = ref('');
+
+  const handleRadioChange = (value) => {
+    selectedStatus.value = value;
+  };
 
   let query = ref('')
-  console.log(query.value)
 
   let debounceTimeout = null;
 
@@ -118,9 +149,11 @@
 
   let searchResults = ref([])
   
+  
   const searchGames = () => {
   searchResults = ref([]);
   debounce(() => {
+    loading.value = true
     const queryValue = query.value; // Get the user's query
     const searchLimit = 5
     // Make a request to the IGDB API
@@ -162,7 +195,22 @@
       })
       .catch((error) => {
         console.error('Error fetching game data:', error);
+      })
+      .finally(() => {
+        loading.value = false
       });
   }, 500);
 };
+
+const uid = store.uid
+console.log(uid)
+
+const handleAddToCollection = (gameId, gameName, gameStatus) => {
+  const db = getDatabase()
+  console.log(uid)
+  set(dbRef(db, 'data/users/' + uid + `/game_collection/${gameId}`), {
+                game_name: gameName,
+                game_status: gameStatus
+  });
+}
   </script>

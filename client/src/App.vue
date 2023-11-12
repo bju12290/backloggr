@@ -12,6 +12,7 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     store.setSignedIn(true)
     const uid = user.uid
+    store.setUid(uid)
     const dbRef = ref(getDatabase());
             get(child(dbRef, `data/users/${uid}`)).then((snapshot) => {
                 if (snapshot.exists()) {
