@@ -11,21 +11,20 @@
     - SteamGridDB API :white_check_mark:
     - Time To Beat API (Doesn't exist yet, but IGDB does provide time to beat for some games) :white_check_mark:
  - Create Page to Manage Video Game Collection
-    - Auto-Suggest Functionality
-    - Way to Track Status in Collection, ie: Finished, Backlog, Dropped. Optional Input
+    - Auto-Suggest Functionality :white_check_mark:
+    - Way to Track Status in Collection, ie: Finished, Backlog, Dropped. Optional Input :white_check_mark:
  - Create Page to Display Collection (preferably one that the user can share with others)
-    - Also give the user the ability to edit/remove items from their collection here.
-- Create Individual Game Pages
-- Create User Settings Page
+ - Create Individual Game Pages
+ - Create User Settings Page
    - Username
    - Profile Picture
    - Password
    - Email (?)
-- Create a Method For Users to Import Games from Steam Library and other video game library services if possible
+ - Create a Method For Users to Import Games from Steam Library and other video game library services if possible
     - Steam API
     - Epic Games API
-- Error Handling for Incorrect Password, Insecure Password, Account Already Exists, etc.
-- Reset Forgotten Password Functionality?
+ - Error Handling for Incorrect Password, Insecure Password, Account Already Exists, etc.
+ - Reset Forgotten Password Functionality?
 
 
 - Mobile Responsiveness

@@ -88,6 +88,40 @@ export const getGameData = functions.https.onRequest(async (request, response) =
     }
   });
 
+  export const getGameDataViaId = functions.https.onRequest(async (request, response) => {
+    try {
+      await cors(request, response, async () => {
+        const accessTokenSnapshot = await twitchAccessTokenRef.once('value');
+        const twitchAccessToken = accessTokenSnapshot.val();
+      if (!twitchAccessToken) {
+        response.status(500).json({ error: 'Twitch access token is missing or invalid.' });
+        return;
+      }
+
+      const client_id = twitchClientId.value()
+  
+      const igdbApiUrl = 'https://api.igdb.com/v4/games';
+  
+      const headers = {
+        'Client-ID': client_id,
+        'Authorization': `Bearer ${twitchAccessToken}`,
+      };
+
+      const id = request.query.query;
+      const searchLimit = request.query.limit
+
+      const requestBody = `fields name; limit ${searchLimit}; where id = ${id};`;
+  
+      const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
+  
+      response.json(igdbResponse.data);
+    })
+    } catch (error) {
+      console.error('Error obtaining IGDB data:', error);
+      response.status(500).json({ error: 'Internal Server Error', message: 'An error occurred while processing your request.' });
+    }
+  });
+
 export const getSteamGridDBData = functions.https.onRequest(async (request, response) => {
   try {
     await cors(request, response, async () => {

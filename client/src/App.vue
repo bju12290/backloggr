@@ -11,6 +11,7 @@ const auth = getAuth()
 auth.onAuthStateChanged((user) => {
   if (user) {
     store.setSignedIn(true)
+    console.log(user)
     const uid = user.uid
     store.setUid(uid)
     const dbRef = ref(getDatabase());
@@ -28,6 +29,7 @@ auth.onAuthStateChanged((user) => {
     // No user is signed in.
     store.setSignedIn(false)
     store.userData = {}
+    store.setUid('')
   }
 });
 

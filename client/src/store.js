@@ -11,4 +11,14 @@ export const store = reactive({
     setUid(userId) {
         this.uid = userId
     },
+    waitForUid: async () => {
+        return new Promise((resolve) => {
+          const waitForUidInterval = setInterval(() => {
+            if (store.uid) {
+              clearInterval(waitForUidInterval);
+              resolve();
+            }
+          }, 100);
+        });
+      },
 })
