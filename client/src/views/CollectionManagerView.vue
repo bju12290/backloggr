@@ -7,15 +7,14 @@
     - Add popup for successful collection addition, collection item updated, and update failed :check:
     - Add "Item in Collection" under item in search results if user already has item in collection :check:
     - Add Collection Items Underneath Search Bar :check:
-    - Add Ability to Change Game Status Under Each Game
-    - Add Ability to Remove Game From Collection
-    - Add Ability to Select Platform
-    - Add "Get Collection Link" So Users Can Share Collection With Friends
-
+    - Finish CollectionGrid Component
+    - Finish SortSearchFilter Component
+    - Make Collection Additions Update in Realtime
+    - Run Loading Animation Until All Games are Loaded, Notify Users of Potentially Long Load Times, Look Into Optimization Methods
+    - Add "Get Collection Link" So Users Can Share Collection With Friends 
 -->
 
 <style scoped>
-/* Your existing styles go here */
 .fade-in {
   animation: fadeIn 5s;
   -webkit-animation: fadeIn 5s;
@@ -37,28 +36,26 @@
   transform: translate(-50%, -50%);
   padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Ensure the popups appear above other elements */
-  opacity: 0; /* Initially hidden */
+  z-index: 1000;
+  opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
-/* Additional styling for specific popups */
 .popup.success-popup {
-  background-color: #8EE4AF; /* Green background for success popup */
-  color: #13543B; /* Dark green text color */
+  background-color: #8EE4AF; 
+  color: #13543B; 
 }
 
 .popup.error-popup {
-  background-color: #F87171; /* Red background for error popup */
-  color: #742A2A; /* Dark red text color */
+  background-color: #F87171;
+  color: #742A2A; 
 }
 
 .popup.update-popup {
-  background-color: #93C5FD; /* Blue background for update popup */
-  color: #1E3A8A; /* Dark blue text color */
+  background-color: #93C5FD; 
+  color: #1E3A8A;
 }
 
-/* Show the popups */
 .popup.active {
   opacity: 1;
 }
@@ -180,7 +177,7 @@
         </div>
       </Combobox>
     </div>
-    <CollectionGrid />
+    <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
   </template>
   
   <script setup>
@@ -224,7 +221,6 @@ watchEffect(() => {
   
   
   const searchGames = () => {
-    console.log(store)
   searchResults = ref([]);
   debounce(() => {
     loading.value = true
@@ -234,6 +230,7 @@ watchEffect(() => {
     fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${queryValue}&limit=${searchLimit}`)
       .then((response) => response.json())
       .then(async (gameData) => {
+        console.log(gameData)
         // Create an array to store the promises for fetching artwork
         const promises = gameData.map(async (game) => {
           const gameName = game.name;
