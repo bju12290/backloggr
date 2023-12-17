@@ -89,39 +89,42 @@ export const getGameData = functions.https.onRequest(async (request, response) =
   });
 
   export const getPlatforms = functions.https.onRequest(async (request, response) => {
+    console.log("Started getPlatforms");
     try {
       await cors(request, response, async () => {
         const accessTokenSnapshot = await twitchAccessTokenRef.once('value');
         const twitchAccessToken = accessTokenSnapshot.val();
-      if (!twitchAccessToken) {
-        response.status(500).json({ error: 'Twitch access token is missing or invalid.' });
-        return;
-      }
-
-      const client_id = twitchClientId.value()
-
-      const platformId = request.query.query;
+        if (!twitchAccessToken) {
+          response.status(500).json({ error: 'Twitch access token is missing or invalid.' });
+          return;
+        }
   
-      const igdbApiUrl = 'https://api.igdb.com/v4/platforms';
-
-      const headers = {
-        'Client-ID': client_id,
-        'Authorization': `Bearer ${twitchAccessToken}`,
-      };
-
-
-      const requestBody = `fields name, platform_logo, abbreviation; where id = ${platformId};`;
-      const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
+        const client_id = twitchClientId.value();
   
-      response.json(igdbResponse.data);
-    })
+        // Assuming request.query.query is an array of platformIds
+        const platformIds = request.query.query;
+  
+        const igdbApiUrl = 'https://api.igdb.com/v4/platforms';
+  
+        const headers = {
+          'Client-ID': client_id,
+          'Authorization': `Bearer ${twitchAccessToken}`,
+        };
+  
+        const requestBody = `fields abbreviation; where id = (${platformIds});`;
+        const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
+  
+        response.json(igdbResponse.data);
+        console.log("Finished getPlatforms");
+      });
     } catch (error) {
       console.error('Error obtaining IGDB data:', error);
       response.status(500).json({ error: 'Internal Server Error', message: 'An error occurred while processing your request.' });
     }
-  })
+  });
 
   export const getGameDataViaId = functions.https.onRequest(async (request, response) => {
+    console.log("Started getGameDataViaId")
     try {
       await cors(request, response, async () => {
         const accessTokenSnapshot = await twitchAccessTokenRef.once('value');
@@ -148,6 +151,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   
       response.json(igdbResponse.data);
+      console.log("Finished getGameDataViaId")
     })
     } catch (error) {
       console.error('Error obtaining IGDB data:', error);
@@ -156,6 +160,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
   });
 
 export const getSteamGridDBData = functions.https.onRequest(async (request, response) => {
+  console.log("Started getSteamGridDBData")
   try {
     await cors(request, response, async () => {
     const api_key = steamGridAPIKey.value()
@@ -168,6 +173,7 @@ export const getSteamGridDBData = functions.https.onRequest(async (request, resp
 
     const sgdbResponse = await axios.get(steamGridUrl, { headers })
     response.json(sgdbResponse.data)
+    console.log("Finished getSteamGridDBData")
   })
   } catch (error) {
     console.error('Error obtaining SGDB data', error)
@@ -176,6 +182,7 @@ export const getSteamGridDBData = functions.https.onRequest(async (request, resp
 })
 
 export const getGrid = functions.https.onRequest(async (request, response) => {
+  console.log("Started getGrid")
   try {
     await cors(request, response, async () => {
       const api_key=steamGridAPIKey.value()
@@ -187,6 +194,7 @@ export const getGrid = functions.https.onRequest(async (request, response) => {
       }
       const sgdbResponse = await axios.get(steamGridUrl, { headers })
       response.json(sgdbResponse.data)
+      console.log("Finished getGrid")
     })
   } catch (error) {
     console.error('Error obtaing SGDB grid', error)

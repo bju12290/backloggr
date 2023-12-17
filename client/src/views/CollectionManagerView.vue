@@ -7,7 +7,7 @@
     - Add popup for successful collection addition, collection item updated, and update failed :check:
     - Add "Item in Collection" under item in search results if user already has item in collection :check:
     - Add Collection Items Underneath Search Bar :check:
-    - Finish CollectionGrid Component
+    - Finish CollectionGrid Component :check:
     - Finish SortSearchFilter Component
     - Make Collection Additions Update in Realtime
     - Run Loading Animation Until All Games are Loaded, Notify Users of Potentially Long Load Times, Look Into Optimization Methods
@@ -119,6 +119,7 @@
                               <p class="font-thin">Review Score: <span class="font-medium">{{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</span></p>
                               <form class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
                                 <input
+                                  checked
                                   v-model="selectedStatus[game.id]"
                                   :name="'status-' + (game ? game.id : '')"
                                   value="playing"
@@ -177,6 +178,7 @@
         </div>
       </Combobox>
     </div>
+    <SortSearchFilter />
     <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
   </template>
   
@@ -194,14 +196,13 @@
   import { getDatabase, ref as dbRef, set, get } from "firebase/database";
   import { store } from '../store'
   import CollectionGrid from '../components/CollectionGrid.vue'
+  import SortSearchFilter from '../components/SortSearchFilter.vue'
 
   const uid = ref(null);
-  console.log(uid.value)
   
 watchEffect(() => {
   uid.value = store.uid;
   // Now you can use uid.value in your component
-  console.log(uid.value);
 });
 
   const loading = ref(false)
@@ -285,6 +286,9 @@ const showErrorPopup = ref(false);
 const showUpdatePopup = ref(false);
 
 const handleAddToCollection = (gameId, gameName, gameStatus) => {
+  if (gameStatus === undefined) {
+    gameStatus = "playing"
+  }
   const db = getDatabase();
   console.log(uid);
 
@@ -325,6 +329,7 @@ const handleAddToCollection = (gameId, gameName, gameStatus) => {
   set(gameRef, {
     game_name: gameName,
     game_status: gameStatus,
+    platform: "Uncategorized"
   });
 }
 

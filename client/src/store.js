@@ -4,7 +4,6 @@ export const store = reactive({
     signedIn: '',
     setSignedIn(status) {
         this.signedIn = status
-        console.log(status)
     },
     userData: {},
     uid: '',
@@ -21,4 +20,12 @@ export const store = reactive({
           }, 100);
         });
       },
+    selectedPlatforms: [],
+    setSelectedPlatforms(platform) {
+      this.selectedPlatforms = platform.slice()
+    },
+    searchTerm: '',
+    setSearchTerm(value) {
+      this.searchTerm = value
+    }
 })

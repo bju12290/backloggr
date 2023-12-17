@@ -11,14 +11,12 @@ const auth = getAuth()
 auth.onAuthStateChanged((user) => {
   if (user) {
     store.setSignedIn(true)
-    console.log(user)
     const uid = user.uid
     store.setUid(uid)
     const dbRef = ref(getDatabase());
             get(child(dbRef, `data/users/${uid}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     store.userData = snapshot.val()
-                    console.log(store.userData)
                 } else {
                     console.log("No data available");
                 }

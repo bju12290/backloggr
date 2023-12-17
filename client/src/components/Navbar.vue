@@ -22,7 +22,7 @@ const handleSignOut = () => {
 
 const navigation = [
   { name: 'Home', href: '/', current: true },
-  { name: 'Team', href: '#', current: false },
+  { name: 'Collection', href: '/collectionmanager', current: false },
   { name: 'Projects', href: '#', current: false },
   { name: 'Calendar', href: '#', current: false },
 ]
