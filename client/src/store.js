@@ -27,5 +27,17 @@ export const store = reactive({
     searchTerm: '',
     setSearchTerm(value) {
       this.searchTerm = value
+    },
+    releaseYearStart: 1958,
+    setReleaseYearStart(value) {
+      this.releaseYearStart = value
+    },
+    releaseYearEnd: 2023,
+    setReleaseYearEnd(value) {
+      this.releaseYearEnd = value
+    },
+    selectedStatuses: [],
+    setSelectedStatuses(value) {
+      this.selectedStatuses = value.slice()
     }
 })

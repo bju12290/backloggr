@@ -20,9 +20,10 @@
 
             <h3 class="line-clamp-1">{{ store.userData.game_collection[id]?.game_name || 'Loading...' }}</h3>
             <img :src="gameData[id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="max-h-40" />
+            <p>First Release: {{  game.release_year }}</p>
             <h4>{{ store.userData.game_collection[id].game_status }}</h4>
 
-            <form @change="props.handleAddToCollection(id, gameData[id]?.name, store.userData.game_collection[id].game_status)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
+            <form @change="props.handleAddToCollection(id, gameData[id]?.name, store.userData.game_collection[id].game_status, store.userData.game_collection[id].release_year)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
 
               <input
                 id="playing"
@@ -111,8 +112,8 @@
   const props = defineProps(['handleAddToCollection', 'selectedStatus']);
 
   const consoleLog = () => {
+    console.log(store.selectedStatuses)
     console.log(store.selectedPlatforms)
-    console.log(store.searchTerm)
   }
 
   const fetchGameDetails = async () => {
@@ -148,6 +149,7 @@
           name: gameInfo.name,
           image: artTypeData.data[0]?.url || "https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg",
           platforms: platformData.length > 0 ? platformData : null,
+          release_year: new Date(gameInfo.first_release_date * 1000).getFullYear()
         };
 
 
@@ -164,6 +166,7 @@
 
 const updateFilteredGames = () => {
   const selectedPlatforms = store.selectedPlatforms;
+  const selectedStatuses = store.selectedStatuses;
 
   filteredGames.value = Object.fromEntries(
     Object.entries(store.userData.game_collection)
@@ -177,7 +180,13 @@ const updateFilteredGames = () => {
         const nameMatch =
           store.searchTerm.length === 0 || game.game_name.toLowerCase().includes(store.searchTerm.toLowerCase());
 
-        return platformMatch && nameMatch;
+        const releaseYearMatch =
+          store.releaseYearStart <= game.release_year && game.release_year <= store.releaseYearEnd;
+
+        const statusMatch =
+          selectedStatuses.length === 0 || selectedStatuses.includes(game.game_status)
+
+        return platformMatch && nameMatch && releaseYearMatch && statusMatch;
       })
   );
 };

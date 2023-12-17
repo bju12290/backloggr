@@ -154,7 +154,7 @@
                                 </div>
                               </form>
                               <button
-                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id])"
+                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear() )"
                                 class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 ms-1 mt-2 mb-2"
                               >
                                 Add to Collection
@@ -285,7 +285,7 @@ const showSuccessPopup = ref(false);
 const showErrorPopup = ref(false);
 const showUpdatePopup = ref(false);
 
-const handleAddToCollection = (gameId, gameName, gameStatus) => {
+const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear) => {
   if (gameStatus === undefined) {
     gameStatus = "playing"
   }
@@ -329,7 +329,8 @@ const handleAddToCollection = (gameId, gameName, gameStatus) => {
   set(gameRef, {
     game_name: gameName,
     game_status: gameStatus,
-    platform: "Uncategorized"
+    platform: "Uncategorized",
+    release_year: gameReleaseYear,
   });
 }
 
