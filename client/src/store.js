@@ -39,5 +39,9 @@ export const store = reactive({
     selectedStatuses: [],
     setSelectedStatuses(value) {
       this.selectedStatuses = value.slice()
+    },
+    sortValue: '',
+    setSortValue(value) {
+      this.sortValue = value
     }
 })

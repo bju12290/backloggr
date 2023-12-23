@@ -30,6 +30,7 @@ export default {
   const releaseYearStart = ref(1958)
   const releaseYearEnd = ref(2023)
   const selectedStatuses = ref([]);
+  const selectedSort = ref(store.selectedSort);
 
   const updatePlatforms = (platform) => {
     const isUncategorized = platform === 'Uncategorized';
@@ -68,6 +69,10 @@ export default {
 
   store.setSelectedStatuses(selectedStatuses.value);
 };
+
+    const updateSortValue = () => {
+      store.setSortValue(selectedSort.value);
+    };  
 
   watch(searchTerm, (newSearchTerm) => {
       store.setSearchTerm(newSearchTerm);
@@ -109,9 +114,11 @@ export default {
       selectedPlatforms,
       updatePlatforms,
       updateStatuses,
+      updateSortValue,
       searchTerm,
       releaseYearStart,
-      releaseYearEnd
+      releaseYearEnd,
+      selectedSort,
     };
   },
 };
@@ -155,5 +162,18 @@ export default {
     <div></div>
     <input @change="updateStatuses('dropped')" id="droppedFilter" type="checkbox"/>
     <label for="droppedFilter"> Dropped</label>
+  </form>
+  <form>
+    <label for="sort" hidden>Sort</label>
+    <select id="sort" v-model="selectedSort" @change="updateSortValue">
+      <option value="">Sort By...</option>
+      <option value="AtoZ">Name: A to Z</option>
+      <option value="ZtoA">Name: Z to A</option>
+      <option value="PopHighToLow">Popularity: High to Low</option>
+      <option value="PopLowToHigh">Popularity: Low to High</option>
+      <option value="Newest">Release Date: Newest First</option>
+      <option value="Oldest">Release Date: Oldest First</option>
+      <option value="Status">Status</option>
+    </select>
   </form>
  </template>

@@ -21,7 +21,6 @@
             <h3 class="line-clamp-1">{{ store.userData.game_collection[id]?.game_name || 'Loading...' }}</h3>
             <img :src="gameData[id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="max-h-40" />
             <p>First Release: {{  game.release_year }}</p>
-            <h4>{{ store.userData.game_collection[id].game_status }}</h4>
 
             <form @change="props.handleAddToCollection(id, gameData[id]?.name, store.userData.game_collection[id].game_status, store.userData.game_collection[id].release_year)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
 
@@ -102,7 +101,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watchEffect, computed } from 'vue';
+  import { ref, onMounted, watchEffect, watch } from 'vue';
   import { store } from '../store';
   import { getDatabase, ref as dbRef, update, get, remove } from "firebase/database";
 
@@ -114,6 +113,8 @@
   const consoleLog = () => {
     console.log(store.selectedStatuses)
     console.log(store.selectedPlatforms)
+    console.log(store.sortValue)
+    console.log(sortedGames.value)
   }
 
   const fetchGameDetails = async () => {
@@ -163,6 +164,7 @@
   };
 
   const filteredGames = ref({});
+  const sortedGames = ref({});
 
 const updateFilteredGames = () => {
   const selectedPlatforms = store.selectedPlatforms;
@@ -190,7 +192,6 @@ const updateFilteredGames = () => {
       })
   );
 };
-
 
   const uid = ref(null);
 
@@ -235,6 +236,7 @@ watchEffect(() => {
 
 
 onMounted(() => {
+  store.sortValue = ''
   uid.value = store.uid;
   fetchGameDetails();
 });
