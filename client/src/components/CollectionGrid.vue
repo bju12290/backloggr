@@ -15,19 +15,20 @@
       <h2 class="">Your Collection</h2>
 
       <div class="grid grid-cols-3 gap-4">
-        <div v-for="(game, id) in filteredGames">
+        <div v-for="(game) in sortedGames">
           <div class="border p-4">
 
-            <h3 class="line-clamp-1">{{ store.userData.game_collection[id]?.game_name || 'Loading...' }}</h3>
-            <img :src="gameData[id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="max-h-40" />
+            <h3 class="line-clamp-1">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
+            <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="max-h-40" />
             <p>First Release: {{  game.release_year }}</p>
+            <p>Review Score: {{ gameData[game.id]?.popularity ? gameData[game.id]?.popularity : "No Rating Found" }}</p>
 
-            <form @change="props.handleAddToCollection(id, gameData[id]?.name, store.userData.game_collection[id].game_status, store.userData.game_collection[id].release_year)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
+            <form @change="props.handleAddToCollection(game.id, gameData[game.id]?.name, store.userData.game_collection[game.id].game_status, store.userData.game_collection[game.id].release_year, gameData[game.id]?.popularity)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
 
               <input
                 id="playing"
-                v-model="store.userData.game_collection[id].game_status"
-                :name="'status-' + (id ? id : '')"
+                v-model="store.userData.game_collection[game.id].game_status"
+                :name="'status-' + (game.id ? game.id : '')"
                 value="playing"
                 type="radio"
               />
@@ -36,8 +37,8 @@
               
               <input 
                 id="completed"
-                v-model="store.userData.game_collection[id].game_status"
-                :name="'status-' + (id ? id : '')" 
+                v-model="store.userData.game_collection[game.id].game_status"
+                :name="'status-' + (game.id ? game.id : '')" 
                 value="completed" 
                 type="radio" 
               />
@@ -46,8 +47,8 @@
               
               <input 
                 id="backlog"
-                v-model="store.userData.game_collection[id].game_status"
-                :name="'status-' + (id ? id : '')" 
+                v-model="store.userData.game_collection[game.id].game_status"
+                :name="'status-' + (game.id ? game.id : '')" 
                 value="backlog" 
                 type="radio" 
                 />
@@ -57,8 +58,8 @@
               <div class="flex gap-2">
                 <input 
                   id="dropped"
-                  v-model="store.userData.game_collection[id].game_status"
-                  :name="'status-' + (id ? id : '')" 
+                  v-model="store.userData.game_collection[game.id].game_status"
+                  :name="'status-' + (game.id ? game.id : '')" 
                   value="dropped" 
                   type="radio" 
                 />
@@ -67,25 +68,25 @@
               </div>
             </form>
             
-            <form @change="handlePlatform(id, store.userData.game_collection[id].platform)">
+            <form @change="handlePlatform(game.id, store.userData.game_collection[game.id].platform)">
 
               <label for="platform">Select Platform:</label>
-                <select id="platform" name="platform" v-model="store.userData.game_collection[id].platform">
+                <select id="platform" name="platform" v-model="store.userData.game_collection[game.id].platform">
                   <option disabled value="">
                     {{ 
-                      gameData[id]?.platforms && gameData[id]?.platforms.length > 0
+                      gameData[game.id]?.platforms && gameData[game.id]?.platforms.length > 0
                         ? "Please select a platform"
                         : "Platform Info Not Found"
                     }}
                   </option>
 
-                  <template v-for="platform in gameData[id]?.platforms">
+                  <template v-for="platform in gameData[game.id]?.platforms">
                       <option :value="platform">{{ platform }}</option>
                   </template>
                 </select>
             </form>
 
-            <button @click="handleRemove(id)">Remove From Collection</button>
+            <button @click="handleRemove(game.id)">Remove From Collection</button>
 
           </div>
         </div>
@@ -111,10 +112,11 @@
   const props = defineProps(['handleAddToCollection', 'selectedStatus']);
 
   const consoleLog = () => {
-    console.log(store.selectedStatuses)
-    console.log(store.selectedPlatforms)
-    console.log(store.sortValue)
+    console.log(filteredGames.value)
     console.log(sortedGames.value)
+    console.log(store.userData.game_collection)
+    console.log(gameData.value)
+    console.log(store.sortValue)
   }
 
   const fetchGameDetails = async () => {
@@ -150,9 +152,9 @@
           name: gameInfo.name,
           image: artTypeData.data[0]?.url || "https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg",
           platforms: platformData.length > 0 ? platformData : null,
-          release_year: new Date(gameInfo.first_release_date * 1000).getFullYear()
+          release_year: new Date(gameInfo.first_release_date * 1000).getFullYear(),
+          popularity: gameInfo.total_rating
         };
-
 
         localSelectedStatus.value[id] = props.selectedStatus[id] || 'playing';
       }
@@ -164,7 +166,6 @@
   };
 
   const filteredGames = ref({});
-  const sortedGames = ref({});
 
 const updateFilteredGames = () => {
   const selectedPlatforms = store.selectedPlatforms;
@@ -192,6 +193,84 @@ const updateFilteredGames = () => {
       })
   );
 };
+
+const sortedGames = ref([]);
+
+watchEffect(() => {
+  const sortingMethod = store.sortValue
+
+  // Convert the object into an array of key-value pairs
+  const gameArray = Object.entries(filteredGames.value);
+  console.log(gameArray)
+  switch (sortingMethod) {
+    case 'AtoZ':
+    gameArray.sort((a, b) => {
+        const gameA = a[1].game_name.toUpperCase();
+        console.log(gameA);
+        const gameB = b[1].game_name.toUpperCase();
+        console.log(gameB);
+
+        if (gameA < gameB) return -1;
+        if (gameA > gameB) return 1;
+        return 0;
+      });
+      break;
+    
+    // Add other cases for different sorting methods
+    case 'ZtoA':
+    gameArray.sort((a, b) => {
+        const gameA = a[1].game_name.toUpperCase();
+        console.log(gameA);
+        const gameB = b[1].game_name.toUpperCase();
+        console.log(gameB);
+
+        if (gameA > gameB) return -1;
+        if (gameA < gameB) return 1;
+        return 0;
+      });
+      break;
+      case 'Newest':
+      gameArray.sort((a, b) => b[1].release_year - a[1].release_year);
+      break;
+
+    case 'Oldest':
+      gameArray.sort((a, b) => a[1].release_year - b[1].release_year);
+      break;
+
+    case 'PopHighToLow':
+      gameArray.sort((a, b) => b[1].popularity - a[1].popularity);
+      break;
+
+    case 'PopLowToHigh':
+      gameArray.sort((a, b) => a[1].popularity - b[1].popularity);
+      break;
+      
+    case 'Status':
+      const statusOrder = { playing: 1, completed: 2, backlog: 3, dropped: 4 };
+
+      gameArray.sort((a, b) => {
+        const statusA = statusOrder[a[1].game_status] || 5; // Default to 5 if not found in the order
+        const statusB = statusOrder[b[1].game_status] || 5; // Default to 5 if not found in the order
+
+        console.log(`Sorting ${a[1].game_name} (${a[1].game_status}) and ${b[1].game_name} (${b[1].game_status}): ${statusA} - ${statusB}`);
+
+        return statusA - statusB;
+      });
+    break;
+
+    default:
+
+    // Add more cases as needed
+    }
+
+  // Sort the array based on the game name
+  
+
+
+  // Update the reactive ref with the sorted array
+  sortedGames.value = gameArray.map(([id, game]) => ({ id, ...game }));
+
+});
 
   const uid = ref(null);
 
