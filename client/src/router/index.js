@@ -25,7 +25,8 @@ const router = createRouter({
     {
       path: '/collection/:uid',
       name: 'collection',
-      component: () => import('../views/CollectionView.vue')
+      component: () => import('../views/CollectionView.vue'),
+      props: true,
     },
     {
       path: '/collectionmanager',

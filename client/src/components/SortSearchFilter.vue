@@ -7,15 +7,15 @@
         - Use the value in the search box to filter by game title :check:
     - Make input boxes to filter by release year :check:
         - Use the values in the input boxes to filter if the game's release year falls between the years of release the user inputs. :check:
-    - Make Sort by A-Z, Z-A, Popularity High to Low, Low to High, Release Date High to Low, Low to High, Status
-        - Create a dropdown with each option
-        - Create Sort By methods
-            - Game Title, A to Z, Z to A
-            - Popularity Based off of IGDB Rating, High to Low, Low to High
-            - Release Date, High to Low, Low to High
-            - Game Status, Completed > Playing > Backlog > Dropped
-    - Sort by Status and Filter by Status in User's Collection
-        - Create checkboxes for each game status value
+    - Make Sort by A-Z, Z-A, Popularity High to Low, Low to High, Release Date High to Low, Low to High, Status :check:
+        - Create a dropdown with each option :check:
+        - Create Sort By methods :check:
+            - Game Title, A to Z, Z to A :check:
+            - Popularity Based off of IGDB Rating, High to Low, Low to High :check:
+            - Release Date, High to Low, Low to High :check:
+            - Game Status, Completed > Playing > Backlog > Dropped :check:
+    - Sort by Status and Filter by Status in User's Collection :check:
+        - Create checkboxes for each game status value :check:
  -->
 
  <script>

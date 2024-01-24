@@ -8,7 +8,7 @@
     - Add "Item in Collection" under item in search results if user already has item in collection :check:
     - Add Collection Items Underneath Search Bar :check:
     - Finish CollectionGrid Component :check:
-    - Finish SortSearchFilter Component
+    - Finish SortSearchFilter Component :check:
     - Make Collection Additions Update in Realtime
     - Run Loading Animation Until All Games are Loaded, Notify Users of Potentially Long Load Times, Look Into Optimization Methods
     - Add "Get Collection Link" So Users Can Share Collection With Friends 
@@ -151,10 +151,18 @@
                                     type="radio" 
                                   />
                                   <label for="dropped">Dropped</label>
+
+                                  <input 
+                                    v-model="selectedStatus[game.id]"
+                                    :name="'status-' + (game ? game.id : '')" 
+                                    value="never-played" 
+                                    type="radio" 
+                                  />
+                                  <label for="never-played">Never Played</label>
                                 </div>
                               </form>
                               <button
-                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear(), game.total_rating)"
+                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear(), game.total_rating, game.platforms)"
                                 class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 ms-1 mt-2 mb-2"
                               >
                                 Add to Collection
@@ -164,7 +172,7 @@
                               </div>
                           </div>
                           <div>
-                            <img class="max-h-60 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/>
+                            <router-link :to="'/game/' + game.id"><img class="max-h-60 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
                           </div>
                         </div>
                         </span>
@@ -177,6 +185,11 @@
         </div>
         </div>
       </Combobox>
+    </div>
+    <div>
+      <label for="profileUrl" hidden>Steam Profile URL:</label>
+      <input id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
+      <button @click="importGames()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Import Library From Steam</button>
     </div>
     <SortSearchFilter />
     <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
@@ -285,13 +298,21 @@ const showSuccessPopup = ref(false);
 const showErrorPopup = ref(false);
 const showUpdatePopup = ref(false);
 
-const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity) => {
+const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds) => {
   if (gameStatus === undefined) {
     gameStatus = "playing"
   }
 
   if (gamePopularity === undefined) {
     gamePopularity = 0
+  }
+
+  if (!gameReleaseYear) {
+    gameReleaseYear = 0
+  }
+
+  if (!platformIds) {
+    platformIds = []
   }
   const db = getDatabase();
   console.log(uid);
@@ -334,6 +355,7 @@ const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, ga
     game_name: gameName,
     game_status: gameStatus,
     platform: "Uncategorized",
+    platformIds: platformIds,
     release_year: gameReleaseYear,
     popularity: gamePopularity
   });
@@ -350,6 +372,71 @@ const checkIsInCollection = async (gameId) => {
   } catch (error) {
     console.error('Error checking if document exists:', error);
     return false;
+  }
+};
+
+const importGames = async () => {
+  // Get the value from the input box
+  const profileUrlInput = document.getElementById("profileUrl");
+  const profileUrl = profileUrlInput.value;
+
+  // Extract the user's URL slug (assuming the URL is in the format "https://steamcommunity.com/id/username")
+  const urlParts = profileUrl.split("/");
+  const userSlug = urlParts[urlParts.length - 1];
+
+  try {
+    // Use Fetch to send the userSlug to the server
+    const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/steamLibraryImport?query=${userSlug}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+
+    const steamLibraryData = await response.json();
+    console.log("Steam Library Data: ", steamLibraryData)
+
+    // Check if the 'games' array exists in the response
+    if (steamLibraryData && steamLibraryData.games && Array.isArray(steamLibraryData.games)) {
+      // Iterate through game batches
+      for (const game of steamLibraryData.games) {
+        await fetchGameDetails(game);
+      }
+    } else {
+      console.error('Invalid or missing "games" array in the server response');
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle errors, e.g., show an error message to the user
+  }
+};
+
+// Function to fetch additional details for a single game
+const fetchGameDetails = async (game) => {
+  try {
+    // Modify the URL and parameters based on your endpoint
+    const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${game.name}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch details for ${game.name}`);
+    }
+
+    const gameDetails = await response.json();
+    console.log(`Details for ${game.name}:`, gameDetails);
+    handleAddToCollection(
+      gameDetails[0].id,
+      gameDetails[0].name,
+      undefined,
+      new Date(gameDetails[0].first_release_date * 1000).getFullYear(),
+      gameDetails[0].total_rating,
+      gameDetails[0].platforms
+    );
+  } catch (error) {
+    console.error(`Error fetching details for ${game.name}:`, error.message);
+    // Handle errors, e.g., log the error or show an error message to the user
   }
 };
 

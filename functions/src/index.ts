@@ -20,6 +20,7 @@ const db = admin.database();
 const twitchClientId = defineString('TWITCH_CLIENT_ID');
 const twitchClientSecret = defineString('TWITCH_CLIENT_SECRET');
 const steamGridAPIKey = defineString('STEAMGRID_API_KEY');
+const steamAPIKey = defineString('STEAM_API_KEY')
 
 const twitchAccessTokenRef = db.ref('/twitchAccessToken');
 
@@ -74,9 +75,9 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       };
 
       const userQuery = request.query.query;
-      const searchLimit = request.query.limit
+      const searchLimit = request.query.limit ? request.query.limit : 1;
 
-      const requestBody = `fields name, first_release_date, total_rating, summary; limit ${searchLimit}; search "${userQuery}"; where version_parent = null;`;
+      const requestBody = `fields name, platforms, first_release_date, total_rating, summary; limit ${searchLimit}; search "${userQuery}"; where version_parent = null;`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
   
@@ -127,14 +128,20 @@ export const getGameData = functions.https.onRequest(async (request, response) =
     console.log("Started getGameDataViaId")
     try {
       await cors(request, response, async () => {
+        console.log("Getting authorization Info")
         const accessTokenSnapshot = await twitchAccessTokenRef.once('value');
         const twitchAccessToken = accessTokenSnapshot.val();
       if (!twitchAccessToken) {
+        console.log("Error getting TwitchAccessToken")
         response.status(500).json({ error: 'Twitch access token is missing or invalid.' });
         return;
       }
 
+      console.log("Got Access Token... Proceeding", twitchAccessToken)
+
       const client_id = twitchClientId.value()
+
+      console.log("Client ID:", client_id)
   
       const igdbApiUrl = 'https://api.igdb.com/v4/games';
   
@@ -144,11 +151,15 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       };
 
       const id = request.query.query;
+      console.log("Game ID:", id)
       const searchLimit = request.query.limit
+      console.log("searchLimit:", searchLimit)
 
       const requestBody = `fields name, platforms, first_release_date, total_rating; limit ${searchLimit}; where id = ${id};`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
+
+      console.log(igdbResponse.data)
   
       response.json(igdbResponse.data);
       console.log("Finished getGameDataViaId")
@@ -201,3 +212,38 @@ export const getGrid = functions.https.onRequest(async (request, response) => {
     response.status(500).json({ error: 'Internal Server Error' })
   }
 })
+
+export const steamLibraryImport = functions.https.onRequest(async (request, response) => {
+  try {
+    // Enable CORS
+    await cors(request, response, async () => {
+      const api_key = steamAPIKey.value();
+      const vanityUrl = request.query.query;
+
+      console.log('Received vanity URL:', vanityUrl);
+
+      const getSteamIdURL = `http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${api_key}&vanityurl=${vanityUrl}`
+
+      const steamIdResponse = await axios.get(getSteamIdURL)
+
+      const steamId = steamIdResponse.data.response.steamid
+
+      // Log the received steamId to the console for testing
+      console.log('Received steam ID:', steamId);
+
+      const getOwnedGamesURL = `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${api_key}&steamid=${steamId}&include_appinfo=1&format=json`;
+
+      const steamResponse = await axios.get(getOwnedGamesURL);
+
+      if (steamResponse.data && steamResponse.data.response && steamResponse.data.response.games) {
+        const userGames = steamResponse.data.response.games;
+        response.json({ games: userGames });
+      } else {
+        response.json({ error: 'Unable to fetch user games from Steam API' });
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user games from Steam API', error);
+    response.status(500).json({ error: 'Internal Server Error' });
+  }
+});

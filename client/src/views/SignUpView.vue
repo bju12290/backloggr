@@ -1,6 +1,6 @@
 <script>
 import { RouterLink } from 'vue-router'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { store } from '../store'
 import { getDatabase, ref, set } from 'firebase/database';
 
@@ -29,6 +29,15 @@ export default {
             store.setSignedIn(true)
             const user = userCredential.user;
             const uid = user.uid
+
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+          // Email verification sent!
+            console.log('Email verification sent!');
+          })
+          .catch((error) => {
+            console.error('Error sending email verification:', error.message);
+          });
 
             const db = getDatabase()
             set(ref(db, 'data/users/' + uid), {
