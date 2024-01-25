@@ -165,3 +165,40 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     }
   }
   
+  export const searchGames = async (queryValue, searchLimit) => {
+    try {
+        const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${queryValue}&limit=${searchLimit}`);
+        const gameData = await response.json();
+
+        const promises = gameData.map(async (game) => {
+            const gameName = game.name;
+
+            const steamGridDBResponse = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getSteamGridDBData?query=${gameName}`);
+            const steamGridDBData = await steamGridDBResponse.json();
+            game.steamGridDBData = steamGridDBData;
+
+            return game;
+        });
+
+        const resultsWithSteamGridDB = await Promise.all(promises);
+
+        const artTypePromises = resultsWithSteamGridDB.map(async (game) => {
+            if (game.steamGridDBData.data && game.steamGridDBData.data.length > 0) {
+                const artTypeResponse = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGrid?query=${game.steamGridDBData.data[0].id}`);
+                const artTypeData = await artTypeResponse.json();
+                game.artType = artTypeData;
+            }
+            return game;
+        });
+
+        const resultsWithArtType = await Promise.all(artTypePromises);
+
+        const searchResults = resultsWithArtType;
+
+        console.log(searchResults);
+        return searchResults; // Move the return statement inside the async block
+    } catch (error) {
+        console.error('Error fetching game data:', error);
+        throw error; // Propagate the error
+    }
+};
