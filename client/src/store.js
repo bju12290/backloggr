@@ -1,7 +1,16 @@
 import { reactive } from 'vue'
+import router from './router/index.js'
+
+const currentPath = router.currentRoute.value.path;
 
 export const store = reactive({
-    signedIn: '',
+  navigation: [
+    { name: 'Home', href: '/', current: false },
+    { name: 'Collection', href: '/collectionmanager', current: false },
+    { name: 'Search', href: '/search', current: false },
+    // ...other navigation items
+  ],
+    signedIn: false,
     setSignedIn(status) {
         this.signedIn = status
     },
@@ -43,5 +52,6 @@ export const store = reactive({
     sortValue: '',
     setSortValue(value) {
       this.sortValue = value
-    }
+    },
+    theme: 'light',
 })

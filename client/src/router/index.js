@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { store } from '../store.js'
 import HomeView from '../views/HomeView.vue'
+import CollectionManagerView from '../views/CollectionManagerView.vue';
+import SearchView from '../views/SearchView.vue';
+import AboutView from '../views/AboutView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,15 +27,9 @@ const router = createRouter({
       component: () => import('../views/SignUpView.vue')
     },
     {
-      path: '/collection/:uid',
-      name: 'collection',
-      component: () => import('../views/CollectionView.vue'),
-      props: true,
-    },
-    {
       path: '/collectionmanager',
       name: 'collection-manager',
-      component: () => import('../views/CollectionManagerView.vue')
+      component: CollectionManagerView
     },
     {
       path: '/game/:gameId',
@@ -46,14 +44,25 @@ const router = createRouter({
     {
       path: '/search',
       name: 'search',
-      component: () => import('../views/SearchView.vue')
+      component: SearchView
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue')
+      component: AboutView
     }
   ]
 })
+
+router.afterEach((to) => {
+  // Reset the current state of all navigation items
+  store.navigation.forEach(navItem => navItem.current = false);
+
+  // Find the navigation item that matches the current route and set it as current
+  const currentNavItem = store.navigation.find(navItem => navItem.href === to.path);
+  if (currentNavItem) {
+    currentNavItem.current = true;
+  }
+});
 
 export default router

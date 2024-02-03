@@ -20,21 +20,23 @@ const handleSignOut = () => {
     });
 };
 
-const navigation = [
-  { name: 'Home', href: '/', current: true },
-  { name: 'Collection', href: '/collectionmanager', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-]
+const toggleDarkMode = () => {
+  const newTheme = store.theme === 'light' ? 'dark' : 'light';
+  store.theme = newTheme;
+  localStorage.setItem('theme', newTheme);
+};
+
+const navigation = store.navigation
 </script>
 
 <template>
-    <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
-      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+  <div class="roboto-regular">
+    <Disclosure as="nav" class="" v-slot="{ open }">
+      <div class="mx-auto px-2 sm:px-6 lg:px-8 dark:bg-dark-background bg-light-background border-solid border-b-2 dark:border-dark-accent border-light-accent">
         <div class="relative flex h-16 items-center justify-between">
           <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <!-- Mobile menu button-->
-            <DisclosureButton class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <DisclosureButton class="relative inline-flex items-center justify-center rounded-md p-2 dark:text-dark-text text-light-text focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
               <span class="absolute -inset-0.5" />
               <span class="sr-only">Open main menu</span>
               <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
@@ -47,21 +49,30 @@ const navigation = [
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
-                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
+                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'dark:bg-dark-secondary dark:text-dark-text bg-light-secondary text-light-text' : 'dark:text-dark-text text-light-text hover:bg-light-secondary hover:dark:bg-dark-secondary hover:text-light-text', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
               </div>
             </div>
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-              <span class="absolute -inset-1.5" />
-              <span class="sr-only">View notifications</span>
-              <BellIcon class="h-6 w-6" aria-hidden="true" />
-            </button>
+            <div @click="toggleDarkMode" class="flex flex-col justify-center ml-3">
+            <input type="checkbox" name="light-switch" class="light-switch sr-only" />
+            <label class="relative cursor-pointer p-2" for="light-switch">
+                <svg class="hidden dark:block" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                    <path class="fill-slate-300" d="M7 0h2v2H7zM12.88 1.637l1.414 1.415-1.415 1.413-1.413-1.414zM14 7h2v2h-2zM12.95 14.433l-1.414-1.413 1.413-1.415 1.415 1.414zM7 14h2v2H7zM2.98 14.364l-1.413-1.415 1.414-1.414 1.414 1.415zM0 7h2v2H0zM3.05 1.706 4.463 3.12 3.05 4.535 1.636 3.12z" />
+                    <path class="fill-slate-400" d="M8 4C5.8 4 4 5.8 4 8s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4Z" />
+                </svg>
+                <svg class="dark:hidden" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                    <path class="fill-slate-400" d="M6.2 1C3.2 1.8 1 4.6 1 7.9 1 11.8 4.2 15 8.1 15c3.3 0 6-2.2 6.9-5.2C9.7 11.2 4.8 6.3 6.2 1Z" />
+                    <path class="fill-slate-500" d="M12.5 5a.625.625 0 0 1-.625-.625 1.252 1.252 0 0 0-1.25-1.25.625.625 0 1 1 0-1.25 1.252 1.252 0 0 0 1.25-1.25.625.625 0 1 1 1.25 0c.001.69.56 1.249 1.25 1.25a.625.625 0 1 1 0 1.25c-.69.001-1.249.56-1.25 1.25A.625.625 0 0 1 12.5 5Z" />
+                </svg>
+                <span class="sr-only">Switch to light / dark version</span>
+            </label>
+        </div>
   
             <!-- Profile dropdown -->
             <Menu as="div" class="relative ml-3">
               <div>
-                <MenuButton class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <MenuButton class="relative flex rounded-full bg-light-background text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span class="absolute -inset-1.5" />
                   <span class="sr-only">Open user menu</span>
                   <img class="h-8 w-8 rounded-full" :src="store.userData.profile_picture ? store.userData.profile_picture : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1705911583/defaultpfp.jpg'" alt="" />
@@ -98,4 +109,5 @@ const navigation = [
         </div>
       </DisclosurePanel>
     </Disclosure>
+  </div>
   </template>

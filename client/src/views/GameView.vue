@@ -36,6 +36,7 @@ onMounted(async () => {
     <p>{{ gameDetails.total_rating }}</p>
     <p>{{ new Date(gameDetails.first_release_date).toLocaleDateString('en-US') }}</p>
     <p v-for="platform in platformDetails">{{ platform }}</p>
+    <div v-if="store.signedIn">
     <div v-if="store.userData.game_collection[gameDetails.id]">
       <form @change="handleUpdate(gameDetails.id, store.userData.game_collection[gameDetails.id].game_status, store.uid)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
 
@@ -111,4 +112,5 @@ onMounted(async () => {
     <div v-else>
       <button @click="handleAddToCollection(gameDetails.id, gameDetails.name, undefined, gameDetails.first_release_date, gameDetails.total_rating, gameDetails.platforms, store.uid )">Add to Collection</button>
     </div>
+  </div>
 </template>

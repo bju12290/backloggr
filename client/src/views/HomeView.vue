@@ -42,7 +42,7 @@ import { store } from '../store'
 
 <template>
   <main>
-    <div>
+    <div class="h-full">
       
     </div>
   </main>
