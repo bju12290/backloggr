@@ -8,21 +8,31 @@
 - Optimize :check:
 - Create 'No Games Found' Display When No Games are Found :check:
 -->
+<style scoped>
+</style>
 
 <template>
 
     <div class="mt-16">
-      <h2 class="">Your Collection</h2>
+      <h1 class="text-light-text dark:text-dark-text text-center roboto-bold text-2xl">Your Collection</h1>
 
-      <div class="grid grid-cols-3 gap-4">
-        <div v-for="(game) in sortedGames">
-          <div class="border p-4">
-
-            <h3 class="line-clamp-1">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
-            <router-link :to="'/game/' + game.id"><img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="max-h-40" /></router-link>
-            <p>First Release: {{  game.release_year }}</p>
-            <p>Review Score: {{ gameData[game.id]?.popularity ? gameData[game.id]?.popularity : "No Rating Found" }}</p>
-
+      <div class="text-light-text dark:text-dark-text lg:grid lg:grid-cols-3 gap-4">
+        <div class="p-1" v-for="(game) in sortedGames">
+          <div class="border border-light-primary dark:border-dark-primary rounded-md 
+          bg-light-secondary dark:bg-dark-secondary p-4">
+          <div class="flex flex-row">
+            <router-link :to="'/game/' + game.id">
+              <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="hover:scale-110 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
+            </router-link>
+          <div class="p-2">
+            <h3 class="text-lg line-clamp-1 roboto-bold">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
+            <p class="line-clamp-1 roboto-regular">First Release</p>
+            <p class="roboto-thin">{{  game.release_year }}</p>
+            <p class="line-clamp-1 roboto-regular">Review Score</p>
+            <p class="line-clamp-1 roboto-thin">{{ gameData[game.id]?.popularity ? gameData[game.id]?.popularity?.toFixed(2) : "No Rating Found" }}</p>
+          </div>
+          </div>
+          <div class="flex flex-col w-full">
             <form @change="props.handleAddToCollection(game.id, store.userData.game_collection[game.id]?.game_name, store.userData.game_collection[game.id].game_status, store.userData.game_collection[game.id].release_year, gameData[game.id]?.popularity, store.userData.game_collection[game.id].platformIds)" class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
 
               <input
@@ -42,9 +52,10 @@
                 value="completed" 
                 type="radio" 
               />
-
+              
               <label :for="'completed-' + game.id">Completed</label>
               
+              <div class="flex gap-2">
               <input 
                 :id="'backlog-' + game.id"
                 v-model="store.userData.game_collection[game.id].game_status"
@@ -54,6 +65,7 @@
                 />
 
               <label :for="'backlog-' + game.id">Backlog</label>
+            </div>
               
               <div class="flex gap-2">
                 <input 
@@ -77,26 +89,27 @@
                 <label :for="'dropped-' + game.id">Never Played</label>
               </div>
             </form>
-            
+            <div class="flex flex-col justify-center items-center text-center">
             <form @change="handlePlatform(game.id, store.userData.game_collection[game.id].platform)" @click="fetchPlatforms(game.id, store.userData.game_collection[game.id].platformIds )">
 
-              <label for="platform">Select Platform:</label>
-                <select class="w-48 p-1 border rounded" id="platform" name="platform" v-model="store.userData.game_collection[game.id].platform">
-                  <option disabled value="">
+              <label class="" for="platform">Select Platform:</label> <br/>
+                <select class="w-48 p-1 border rounded bg-light-primary dark:bg-dark-primary" id="platform" name="platform" v-model="store.userData.game_collection[game.id].platform">
+                  <option value="">
                     {{ 
                       store.userData.game_collection[game.id]?.platforms && store.userData.game_collection[game.id]?.platforms.length > 0
-                        ? "Please select a platform"
+                        ? "Select Your Platform"
                         : loadingStatus
                     }}
                   </option>
                   <template v-for="platform in store.userData.game_collection[game.id]?.platforms">
-                      <option class="w-full" :value="platform">{{ platform }}</option>
+                      <option class="w-full bg-light-primary dark:bg-dark-primary" :value="platform">{{ platform }}</option>
                   </template>
                 </select>
             </form>
+          </div>
 
-            <button @click="handleRemove(game.id)">Remove From Collection</button>
-
+            <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-2/3 roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(game.id)">Remove From Collection</button>
+          </div>
           </div>
         </div>
       </div>
@@ -105,8 +118,6 @@
     <div v-if="Object.keys(filteredGames).length === 0">
       No Games Found
     </div>
-
-    <button @click="consoleLog">Console Log</button>
 
   </template>
   

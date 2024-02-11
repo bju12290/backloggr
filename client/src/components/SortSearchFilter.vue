@@ -88,17 +88,21 @@ export default {
 
   watchEffect(() => {
     const gameCollection = store.userData.game_collection;
+    console.log(gameCollection)
     uniquePlatforms.value.clear();
 
     if (gameCollection) {
       for (const gameId in gameCollection) {
         const game = gameCollection[gameId];
+        console.log(game)
         const platform = game.platform || 'Uncategorized';
+        console.log(platform)
         uniquePlatforms.value.add(platform);
+        console.log(uniquePlatforms)
       }
 
       // Convert Set to array and sort it with "Uncategorized" at the end
-      const sortedPlatforms = Array.from(uniquePlatforms.value).sort((a, b) => {
+      const sortedPlatforms = Array.from(uniquePlatforms.value).filter(platform => typeof platform === 'string').sort((a, b) => {
         if (a === 'Uncategorized') return 1;
         if (b === 'Uncategorized') return -1;
         return a.localeCompare(b);
@@ -125,18 +129,19 @@ export default {
 </script>
  
  <template>
-  <form>
+  <div class="m-3 text-light-text dark:text-dark-text">
+  <form class="mb-1">
     <label for="search" hidden>Search for a Game</label>
-    <input id="search" type="text" placeholder="Search for a game..." v-model="searchTerm"/> <br/>
+    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block w-full" id="search" type="text" placeholder="Search for a game..." v-model="searchTerm"/> <br/>
   </form>
-  <form>
+  <form class="mb-1 flex flex-col">
     <label for="releaseYearStart">Release Year</label>
-    <input id="releaseYearStart" placeholder="1958" v-model="releaseYearStart"/>
+    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearStart" placeholder="1958" v-model="releaseYearStart"/>
     <label for="releaseYearEnd" hidden>Release Year End</label>
-    <input id="releaseYearEnd" placeholder="2023" v-model="releaseYearEnd"/>
+    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearEnd" placeholder="2023" v-model="releaseYearEnd"/>
   </form>
   <h2>Platform: </h2>
-   <form>
+   <form class="m-1">
      <div v-for="(platform, i) in uniquePlatforms" :key="i">
        <label class="mt-100">
          <input
@@ -149,7 +154,7 @@ export default {
    </form>
 
    <h2>Status: </h2>
-   <form>
+   <form class="m-1">
     <div></div>
     <input @change="updateStatuses('playing')" id="playingFilter" type="checkbox"/>
     <label for="playingFilter"> Playing</label>
@@ -163,9 +168,9 @@ export default {
     <input @change="updateStatuses('dropped')" id="droppedFilter" type="checkbox"/>
     <label for="droppedFilter"> Dropped</label>
   </form>
-  <form>
+  <form class="mt-1">
     <label for="sort" hidden>Sort</label>
-    <select id="sort" v-model="selectedSort" @change="updateSortValue">
+    <select class="w-full roboto-small w-48 p-1 border rounded bg-light-secondary dark:bg-dark-secondary" id="sort" v-model="selectedSort" @change="updateSortValue">
       <option value="">Sort By...</option>
       <option value="AtoZ">Name: A to Z</option>
       <option value="ZtoA">Name: Z to A</option>
@@ -176,4 +181,5 @@ export default {
       <option value="Status">Status</option>
     </select>
   </form>
+</div>
  </template>

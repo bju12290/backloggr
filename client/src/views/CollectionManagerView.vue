@@ -67,14 +67,14 @@
     <div v-if="showErrorPopup" class="rounded-md fade-in" :class="{ 'popup': true, 'error-popup': true, 'active': showErrorPopup }">Error: Item Not Added to Collection Popup</div>
     <div v-if="showUpdatePopup" class="rounded-md fade-in" :class="{ 'popup': true, 'update-popup': true, 'active': showUpdatePopup }">Item Updated Popup</div>
   </div>
-    <div class="relative m-auto top-7 max-lg:w-full w-1/2 center">
+    <div class="text-light-text dark:text-dark-text relative m-auto top-7 max-lg:w-full w-1/2 center">
       <Combobox v-model="query" v-slot="{ open }">
-        <div class="relative mt-1">
+        <div class="relative">
           <div
-            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+            class="relative w-full cursor-default overflow-hidden rounded-lg bg-light-secondary dark:bg-dark-secondary text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
           >
             <ComboboxInput
-              class="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+              class="mt-1 w-full border-none py-2 pl-3 pr-10 text-sm leading-5 placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-secondary dark:bg-dark-secondary"
               :displayValue="(person) => person.name"
               @change="query = $event.target.value; searchGames();"
             />
@@ -94,30 +94,30 @@
             leaveTo="opacity-0"
           >
             <ComboboxOptions
-              class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+              class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-light-primary dark:bg-dark-primary py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
             >
-            <div v-if="loading" class="h-80 flex flex-col items-center justify-center h-full">
+            <div v-if="loading" class="text-light-text dark:text-dark-text h-80 flex flex-col items-center justify-center h-full">
                 <pacman-loader></pacman-loader>
                 <p>Loading</p>
             </div>
-            <div v-else>
+            <div class="text-light-text dark:text-dark-text" v-else>
               <div
                     v-for="game in searchResults"
                     as="template"
                     :key="game?.id"
                     :value="game"
                     >
-                    <li class="relative cursor-default select-none py-2 pl-10 pr-4 text-gray-900">
+                    <li class="relative cursor-default select-none py-2 pl-10 pr-4">
                         <span class="block truncate text-xl">
                         <div class="grid grid-cols-2 justify-items-center place-items-center">
                           <div class="flex flex-col whitespace-normal max-sm:w-40 max-md:w-64 justify-self-start">
-                              <p>{{ game?.name }}</p>
-                              <p class="font-thin">Release Date: {{ new Date(game?.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
-                              <hr />
-                              <p class="font-thin line-clamp-3">{{ game?.summary }}</p>
-                              <hr />
-                              <p class="font-thin">Review Score: <span class="font-medium">{{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</span></p>
-                              <form class="font-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
+                              <p class="roboto-bold">{{ game?.name }}</p>
+                              <p class="font-thin"><span class="roboto-regular">Release Date:</span> {{ new Date(game?.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
+                              <hr class="border border-light-secondary dark:border-dark-secondary" />
+                              <p class="roboto-thin line-clamp-3">{{ game?.summary }}</p>
+                              <hr class="border border-light-secondary dark:border-dark-secondary" />
+                              <p class="roboto-thin"><span class="roboto-regular">Review Score:</span> {{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</p>
+                              <form class="roboto-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
                                 <input
                                   checked
                                   v-model="selectedStatus[game.id]"
@@ -163,7 +163,7 @@
                               </form>
                               <button
                                 @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear(), game.total_rating, game.platforms)"
-                                class="text-cyan-900 bg-emerald-300 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 ms-1 mt-2 mb-2"
+                                class="hover:scale-105 transition-all duration-500 cursor-pointer roboto-regular border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
                               >
                                 Add to Collection
                               </button>
@@ -186,14 +186,20 @@
         </div>
       </Combobox>
     </div>
-    <div>
-      <label for="profileUrl" hidden>Steam Profile URL:</label>
-      <input id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
-      <button @click="importGames()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Import Library From Steam</button>
+    <div class="flex md:flex-row flex-col">
+      <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
+        <div class="flex flex-col m-3">
+          <label for="profileUrl" hidden>Steam Profile URL:</label>
+          <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-thin border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
+          <button @click="importGames()" class="roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library From Steam</button>
+        </div>
+      <div class="sticky top-8 pt-20">
+        <SortSearchFilter />
+      </div>
+      </div>
+      <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
     </div>
-    <SortSearchFilter />
-    <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
-  </template>
+    </template>
   
   <script setup>
   import { ref, watchEffect  } from 'vue'

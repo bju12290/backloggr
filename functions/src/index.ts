@@ -155,7 +155,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       const searchLimit = request.query.limit
       console.log("searchLimit:", searchLimit)
 
-      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, total_rating, status, category; limit ${searchLimit}; where id = ${id};`;
+      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, total_rating, status, category, summary, aggregated_rating, dlcs.*, expansions.*, franchise.*, game_engines.name, genres.name, player_perspectives.name, screenshots.image_id, similar_games.id, storyline, themes.name, url, videos.*, websites.*; limit ${searchLimit}; where id = ${id};`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
 

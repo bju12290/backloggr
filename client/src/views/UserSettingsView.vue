@@ -1,30 +1,38 @@
 <template>
-    <div>
-        <form @submit.prevent="updateProfilePicture">
-            <label for="profile_picture">Profile Picture</label>
-            <!-- Use type="file" for file input -->
-            <input type="file" id="profile_picture" name="profile_picture" @change="handleFileChange"/> <hr/>
-            <button type="submit">Update Profile Picture</button>
-        </form>
-    </div>
-    <div>
-        <form @submit.prevent="handleEmailUpdate">
-            <label for="email">E-Mail</label>
-            <input type="text" id="email" name="email" v-model="email"/>
-            <button type="submit">Update E-Mail</button>
-        </form>
-    </div>
-    <div>
-        <form @submit.prevent="handlePasswordUpdate">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" v-model="password"/>
+  <notification-popup ref="notificationPopup" :bg-color="notificationColor" :message="notificationMessage"></notification-popup>
+  <div class="p-3 roboto-regular text-light-text dark:text-dark-text">
+    <div class="flex flex-col md:flex-row items-start md:items-center md:justify-center">
+      
+      <!-- Left Column for Profile Picture -->
+      <div class="flex flex-col items-center w-full mt-16 md:w-1/2 md:pr-8">
+        <img class="w-44 h-44 rounded-full object-cover" :src="store.userData.profile_picture ? store.userData.profile_picture : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1705911583/defaultpfp.jpg'" alt="Profile Picture"/>
+          <input class="mt-2 roboto-light md:w-1/2 w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="file" id="profile_picture" name="profile_picture" @change="handleFileChange"/>
+        <button @click="updateProfilePicture" class="mt-[1.7rem] md:w-1/2 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Profile Picture</button>
+      </div>
 
-            <label for="passwordConfirm">Confirm Password</label>
-            <input type="password" id="passwordConfirm" name="passwordConfirm" v-model="passwordConfirm"/>
-            <button type="submit">Update Password</button>
-        </form>
+      <!-- Right Column for Email and Password -->
+      <div class="w-full mt-5 md:w-1/2 md:pl-8">
+        <div class="mt-5">
+          <label class="roboto-black" for="email">E-Mail</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="text" id="email" name="email" v-model="email"/>
+          <button @click="handleEmailUpdate" class="md:max-w-[600px] mt-5 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update E-Mail</button>
+        </div>
+        
+        <div class="mt-5">
+          <label class="roboto-black" for="password">Password</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="password" name="password" v-model="password"/> <hr class="border-none"/>
+          <label class="mt-3 roboto-black" for="passwordConfirm">Confirm Password</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="passwordConfirm" name="passwordConfirm" v-model="passwordConfirm"/>
+          <button @click="handlePasswordUpdate" class="md:max-w-[600px] mt-5 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Password</button>
+        </div>
+      </div>
+
     </div>
-  </template>
+  </div>
+</template>
+
+
+
   
   <script setup>
   import { ref } from 'vue';
@@ -32,6 +40,44 @@
   import {store} from '../store'
   import { getDatabase, ref as dbRef, update } from 'firebase/database';
   import { getAuth, verifyBeforeUpdateEmail, updatePassword  } from "firebase/auth";
+  import NotificationPopup from '@/components/NotificationPopup.vue';
+
+  const notificationPopup = ref(null);
+  const notificationMessage = ref('')
+  const notificationColor = ref('green')
+
+const profilePictureUpdatedNotification = () => {
+  notificationColor.value = 'green'
+  notificationMessage.value = "Successfully Updated Profile Picture!"
+  notificationPopup.value.show();
+}
+
+const emailUpdateNotification = () => {
+  notificationColor.value = 'green'
+  notificationMessage.value = "Email Successfully Updated!"
+  notificationPopup.value.show();
+}
+
+const passwordUpdateNotification = () => {
+  notificationColor.value = 'green'
+  notificationMessage.value = "Password Successfully Updated!"
+  notificationPopup.value.show();
+}
+
+const updateErrorNotification = (error) => {
+  notificationMessage.value = "An error occured! Please try again! Error Message: " + error
+  if (error === 'Firebase: Error (auth/requires-recent-login).') {
+    notificationMessage.value = "Recent authentication is required for an email/password update! Please try logging out, and logging in again!"
+  }
+  if (error === 'Firebase: Error (auth/missing-new-email).') {
+    notificationMessage.value = "Please enter a new e-mail address to update to!"
+  }
+  if (error === "No Match") {
+    notificationMessage.value = "Password don't match!"
+  }
+  notificationColor.value = "red"
+  notificationPopup.value.show();
+}
   
   const auth = getAuth();
 
@@ -77,9 +123,11 @@ const updateProfilePicture = async () => {
     });
 
     console.log('Firebase Realtime Database updated successfully.');
+    profilePictureUpdatedNotification()
 
   } catch (error) {
     console.error('Error uploading profile picture to Cloudinary:', error.message);
+    updateErrorNotification(error)
   }
 };
 
@@ -104,11 +152,12 @@ const handleEmailUpdate = async () => {
     // Prompt the user to check their email for the verification link
 
     // You can provide a user-friendly message here to inform the user to check their email.
-
+    emailUpdateNotification()
   } catch (error) {
     // Handle any errors that occurred during the verification process
-    console.error('Error sending verification email:', error.message);
+    console.error(error.message);
     // You can display an error message to the user
+    updateErrorNotification(error.message)
   }
 };
 
@@ -116,13 +165,16 @@ const handlePasswordUpdate = () => {
   console.log('Updating password:', password.value);
   if (password.value !== passwordConfirm.value) {
     console.log("Passwords do not match!")
+    updateErrorNotification("No Match")
     return
   }
   updatePassword(auth.currentUser, passwordConfirm.value)
   .then(() => {
     console.log("Password update successful!")
+    passwordUpdateNotification()
   }).catch((error) => {
     console.log("An error occured while updating password", error)
+    updateErrorNotification(error)
   })
 };
   </script>

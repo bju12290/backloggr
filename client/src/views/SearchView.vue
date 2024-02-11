@@ -44,31 +44,25 @@ const handleSearch = async () => {
     isLoading.value = false
 }
 
-
-const uid = store.uid // Assume this is obtained from your authentication logic
-
     const setupRealtimeListeners = () => {
       const db = getDatabase();
-      const collectionRef = dbRef(db, `data/users/${uid}/game_collection`);
+      const collectionRef = dbRef(db, `data/users/${store.uid}/game_collection`);
 
       const addListener = onChildAdded(collectionRef, (snapshot) => {
         const gameId = snapshot.key;
         const gameData = snapshot.val();
         store.userData.game_collection[gameId] = gameData;
-        // Any other logic needed after adding a game
       });
 
       const changeListener = onChildChanged(collectionRef, (snapshot) => {
         const gameId = snapshot.key;
         const gameData = snapshot.val();
         store.userData.game_collection[gameId] = gameData;
-        // Logic after a game in the collection is updated
       });
 
       const removeListener = onChildRemoved(collectionRef, (snapshot) => {
         const gameId = snapshot.key;
-        delete store.userData.game_collection[gameId];; // For Vue 3, you might directly delete the property as store is reactive
-        // Additional logic after a game is removed
+        delete store.userData.game_collection[gameId];
       });
 
       // Store these listeners if you need to remove them later
@@ -90,8 +84,8 @@ const uid = store.uid // Assume this is obtained from your authentication logic
         <div class="flex justify-center items-center">
             <div class="flex-col flex justify-center items-center w-full mt-16 m-4 mb-5">
                 <label class="sr-only" for="search">Search Games</label>
-                <input @keyup.enter="handleSearch" class="w-full md:w-3/4 roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block w-full" id="search" type="text" v-model="searchQuery"/>
-                <button @click="handleSearch" class="w-full md:w-3/4 roboto-medium border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block w-full">Search</button>
+                <input placeholder="Search for a game..." @keyup.enter="handleSearch" class="placeholder-dark-secondary dark:placeholder-light-secondary w-full md:w-3/4 roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="search" type="text" v-model="searchQuery"/>
+                <button @click="handleSearch" class="w-full md:w-3/4 roboto-medium border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block">Search</button>
             </div>
         </div>
 
@@ -105,19 +99,19 @@ const uid = store.uid // Assume this is obtained from your authentication logic
         </div>
         <div class="flex flex-col justify-center items-center" v-else>
         <div class="w-11/12 md:w-3/4 bg-opacity-75 shadow-md mx-24 m-4 p-3 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-secondary dark:bg-dark-secondary" v-for="result in searchResults" :key="result.id">
-            <div class="flex md:flex-row flex-col">
+            <div class="flex md:flex-row flex-col md:h-full">
 
                 <!-- Image Column -->
                 <div class="flex justify-center items-center text-center w-1/8">
                     <router-link :to="'/game/' + result.id">
-                        <img class="m-1 w-64" :src="result.image">
+                        <img class="hover:scale-105 transition-all duration-500 cursor-pointer m-1 w-64" :src="result.image">
                     </router-link>
                 </div>
 
                 <!-- Information Column -->
                 <div class="w-full p-3">
                     <router-link :to="'/game/' + result.id">
-                        <p class="roboto-black">{{ result.name }}</p>
+                        <p class="roboto-black text-2xl">{{ result.name }}</p>
                     </router-link>
 
                     <!-- Platforms -->
@@ -139,11 +133,11 @@ const uid = store.uid // Assume this is obtained from your authentication logic
             <!-- Collection Buttons -->
             <div class="flex justify-center text-center" v-if="store.signedIn">
                 <div class="flex justify-center md:justify-start" v-if="store.userData?.game_collection[result.id]">
-                    <button class="roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(result.id, store.uid)"
+                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(result.id, store.uid)"
                     @keyup.enter="handleRemove(result.id, store.uid)">Remove from Collection</button>
                 </div>
                 <div class="flex justify-center md:justify-start" v-else>
-                    <button class="flex roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @keyup.enter="handleRemove(result.id, store.uid)" @click="handleAddToCollection(result.id, result.name, undefined , result.first_release_date, result.total_rating, result.platforms, store.uid )">Add to Collection</button>
+                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer flex roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @keyup.enter="handleRemove(result.id, store.uid)" @click="handleAddToCollection(result.id, result.name, undefined , result.first_release_date, result.total_rating, result.platforms, store.uid )">Add to Collection</button>
                 </div>
             </div>
         </div>
