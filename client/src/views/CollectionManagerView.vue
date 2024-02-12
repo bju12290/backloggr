@@ -1,17 +1,10 @@
 <!-- 
   
   TODO: 
-    - Add Loading Animation for Search Bar :check:
-    - Add Status Functionality to Search Bar :check:
-    - Add Functionality to Add Collection Item to Database :check:
-    - Add popup for successful collection addition, collection item updated, and update failed :check:
-    - Add "Item in Collection" under item in search results if user already has item in collection :check:
-    - Add Collection Items Underneath Search Bar :check:
-    - Finish CollectionGrid Component :check:
-    - Finish SortSearchFilter Component :check:
-    - Make Collection Additions Update in Realtime
-    - Run Loading Animation Until All Games are Loaded, Notify Users of Potentially Long Load Times, Look Into Optimization Methods
-    - Add "Get Collection Link" So Users Can Share Collection With Friends 
+  - List View
+  - Export to Excel Spreadsheet
+  - Import From Excel Spreadsheet
+  - Add "Get Collection Link" So Users Can Share Collection With Friends 
 -->
 
 <style scoped>
@@ -75,7 +68,7 @@
           >
             <ComboboxInput
               class="mt-1 w-full border-none py-2 pl-3 pr-10 text-sm leading-5 placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-secondary dark:bg-dark-secondary"
-              :displayValue="(person) => person.name"
+              :displayValue="(game) => game.name"
               @change="query = $event.target.value; searchGames();"
             />
             <ComboboxButton
@@ -87,7 +80,7 @@
               />
             </ComboboxButton>
           </div>
-          <div v-show="open">
+          <div class="roboto-regular" v-show="open">
           <TransitionRoot
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
@@ -117,6 +110,7 @@
                               <p class="roboto-thin line-clamp-3">{{ game?.summary }}</p>
                               <hr class="border border-light-secondary dark:border-dark-secondary" />
                               <p class="roboto-thin"><span class="roboto-regular">Review Score:</span> {{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</p>
+                              <div v-if="store.signedIn">
                               <form class="roboto-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
                                 <input
                                   checked
@@ -163,7 +157,7 @@
                               </form>
                               <button
                                 @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear(), game.total_rating, game.platforms)"
-                                class="hover:scale-105 transition-all duration-500 cursor-pointer roboto-regular border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
+                                class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer roboto-regular border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
                               >
                                 Add to Collection
                               </button>
@@ -171,14 +165,15 @@
                                 In Collection
                               </div>
                           </div>
+                        </div>
                           <div>
                             <router-link :to="'/game/' + game.id"><img class="max-h-60 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
                           </div>
                         </div>
                         </span>
                     </li>
+                    <hr class="border border-light-secondary dark:border-dark-secondary"/>
                     </div>
-                    <hr>
                   </div>
             </ComboboxOptions>
           </TransitionRoot>
@@ -186,12 +181,13 @@
         </div>
       </Combobox>
     </div>
+    <div v-if="store.signedIn">
     <div class="flex md:flex-row flex-col">
       <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
         <div class="flex flex-col m-3">
           <label for="profileUrl" hidden>Steam Profile URL:</label>
-          <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-thin border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
-          <button @click="importGames()" class="roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library From Steam</button>
+          <input class="placeholder-dark-secondary dark:placeholder-light-secondary montserrat-medium border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
+          <button @click="importGames()" class="montserrat-medium mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library From Steam</button>
         </div>
       <div class="sticky top-8 pt-20">
         <SortSearchFilter />
@@ -199,6 +195,14 @@
       </div>
       <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
     </div>
+  </div>
+  <div v-else>
+    <h1 class="text-light-text dark:text-dark-text text-2xl roboto-bold text-center mt-16">Hey!</h1>
+    <p class="text-light-text dark:text-dark-text text-xl roboto-bold text-center mt-2">You're not signed in! 
+      <router-link to="/login/"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
+      <router-link to="signup"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
+      to start adding games to your collection!</p>
+  </div>
     </template>
   
   <script setup>

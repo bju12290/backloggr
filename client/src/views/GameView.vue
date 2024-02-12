@@ -94,26 +94,26 @@ const setupRealtimeListeners = () => {
         <img class="md:min-w-[24rem]" :src="gameImage"/>
       </div>
       <div class="mt-4 p-3">
-        <h1 class="roboto-black text-2xl">{{ gameDetails.name }}</h1>
-        <p class="roboto-medium mt-2">Review Score</p>
+        <h1 class="montserrat-bold text-2xl">{{ gameDetails.name }}</h1>
+        <p class="montserrat-medium mt-2">Review Score</p>
         <p class="roboto-thin">{{ gameDetails.total_rating?.toFixed(2) }}</p>
-        <p class="roboto-medium mt-2">Release Date</p>
+        <p class="montserrat-medium mt-2">Release Date</p>
         <p class="roboto-thin">{{ new Date(gameDetails.first_release_date * 1000).toLocaleDateString('en-US') }}</p>
-        <p class="roboto-medium mt-2">Genres</p>
+        <p class="montserrat-medium mt-2">Genres</p>
         <div class="flex flex-wrap gap-2">
           <p class="text-xs roboto-light p-2 bg-light-accent dark:bg-dark-accent rounded-full border-solid border border-light-primary dark:border-dark-primary" v-for="genre in gameDetails.genres">{{ genre.name }}</p>
         </div>
-        <p class="roboto-medium mt-2">Themes</p>
+        <p class="montserrat-medium mt-2">Themes</p>
         <div class="flex gap-2" >
           <p class="text-xs roboto-light p-2 bg-light-accent dark:bg-dark-accent rounded-full border-solid border border-light-primary dark:border-dark-primary" v-for="theme in gameDetails.themes">{{ theme.name }}</p>
         </div>
-        <p class="roboto-medium mt-2">Platforms</p>
+        <p class="montserrat-medium mt-2">Platforms</p>
         <div class="flex flex-wrap gap-2">
         <div class="p-1 bg-light-accent dark:bg-dark-accent rounded-full border-solid border border-light-primary dark:border-dark-primary" v-for="platform in gameDetails.platforms">
           <p class="roboto-light text-xs text-center p-1">{{ platform?.abbreviation?.length > 0? platform.abbreviation : platform.name }}</p>
         </div>
       </div>
-      <p class="roboto-medium mt-2">Summary</p>
+      <p class="montserrat-medium mt-2">Summary</p>
       <p>{{ gameDetails.summary }}</p>
       <div v-if="store.signedIn">
     <div class="flex flex-col justify-center items-center gap-2" v-if="store.userData.game_collection[gameDetails.id]">
@@ -172,8 +172,8 @@ const setupRealtimeListeners = () => {
           </div>
           </form>
       <form @change="handleUpdate(gameDetails.id, store.userData.game_collection[gameDetails.id].platform, store.uid)">
-        <label for="platform">Playing On: </label>
-          <select class="roboto-small w-48 p-1 border rounded bg-light-secondary dark:bg-dark-secondary" id="platform" name="platform" v-model="store.userData.game_collection[gameDetails.id].platform">
+        <label class="montserrat-medium" for="platform">Playing On: </label>
+          <select class="montserrat-regular w-48 p-1 border rounded bg-light-secondary dark:bg-dark-secondary" id="platform" name="platform" v-model="store.userData.game_collection[gameDetails.id].platform">
             <option disabled value="">
               {{ 
                 Object.keys(gameDetails.platforms).length > 0
@@ -186,10 +186,10 @@ const setupRealtimeListeners = () => {
             </template>
           </select>
         </form>
-      <button class="roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(gameDetails.id, store.uid)">Remove from Collection</button>
+      <button class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline roboto-light mt-5 p-2 border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(gameDetails.id, store.uid)">Remove from Collection</button>
     </div>
     <div class="flex flex-col justify-center items-center gap-2" v-else>
-      <button class="hover:scale-105 transition-all duration-500 cursor-pointer roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleAddToCollection(gameDetails.id, gameDetails.name, undefined, gameDetails.first_release_date, gameDetails.total_rating, gameDetails.platforms, store.uid )">Add to Collection</button>
+      <button class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer roboto-light mt-5 p-2 border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleAddToCollection(gameDetails.id, gameDetails.name, undefined, gameDetails.first_release_date, gameDetails.total_rating, gameDetails.platforms, store.uid )">Add to Collection</button>
     </div>
   </div>
   </div>

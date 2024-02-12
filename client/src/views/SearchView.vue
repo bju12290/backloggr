@@ -80,12 +80,12 @@ const handleSearch = async () => {
 </script>
 
 <template>
-    <div class="roboto-regular text-light-text dark:text-dark-text" :class="{ 'dark': store.theme === 'dark' }">
+    <div class="montserrat-regular text-light-text dark:text-dark-text" :class="{ 'dark': store.theme === 'dark' }">
         <div class="flex justify-center items-center">
             <div class="flex-col flex justify-center items-center w-full mt-16 m-4 mb-5">
                 <label class="sr-only" for="search">Search Games</label>
-                <input placeholder="Search for a game..." @keyup.enter="handleSearch" class="placeholder-dark-secondary dark:placeholder-light-secondary w-full md:w-3/4 roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="search" type="text" v-model="searchQuery"/>
-                <button @click="handleSearch" class="w-full md:w-3/4 roboto-medium border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block">Search</button>
+                <input placeholder="Search for a game..." @keyup.enter="handleSearch" class="placeholder-dark-secondary dark:placeholder-light-secondary w-full md:w-3/4 montserrat-regular border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="search" type="text" v-model="searchQuery"/>
+                <button @click="handleSearch" class="w-full md:w-3/4 montserrat-bold border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block">Search</button>
             </div>
         </div>
 
@@ -111,33 +111,33 @@ const handleSearch = async () => {
                 <!-- Information Column -->
                 <div class="w-full p-3">
                     <router-link :to="'/game/' + result.id">
-                        <p class="roboto-black text-2xl">{{ result.name }}</p>
+                        <p class="montserrat-extra-bold text-2xl">{{ result.name }}</p>
                     </router-link>
 
                     <!-- Platforms -->
-                    <p class="roboto-medium">Release Date</p>
-                    <p class="roboto-thin">{{ new Date(result.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
-                    <p class="roboto-medium">Review Score</p>
-                    <p class="roboto-thin line-clamp-1">{{ result.total_rating ? result.total_rating?.toFixed(2) : "Review Score Not Found"}}</p>
-                    <p class="roboto-medium">Platforms</p>
+                    <p class="montserrat-bold">Release Date</p>
+                    <p class="montserrat-regular">{{ new Date(result.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
+                    <p class="montserrat-bold">Review Score</p>
+                    <p class="montserrat-regular line-clamp-1">{{ result.total_rating ? result.total_rating?.toFixed(2) : "Review Score Not Found"}}</p>
+                    <p class="montserrat-bold">Platforms</p>
                     <div class="flex flex-wrap gap-2">
                         <div class="p-1 bg-light-accent dark:bg-dark-accent rounded-full border-solid border border-light-primary dark:border-dark-primary" v-for="platform in result.platforms">
-                            <p class="roboto-light text-xs text-center p-1">{{ platform?.abbreviation?.length > 0? platform.abbreviation : platform.name }}</p>
+                            <p class="montserrat-regular text-xs text-center p-1">{{ platform?.abbreviation?.length > 0? platform.abbreviation : platform.name }}</p>
                         </div>
                     </div>
-                    <p class="roboto-medium">Summary</p>
-                    <p class="roboto-light line-clamp-3">{{ result.summary }}</p>
+                    <p class="montserrat-bold">Summary</p>
+                    <p class="montserrat-regular line-clamp-3">{{ result.summary }}</p>
                     
                 </div>
             </div>
             <!-- Collection Buttons -->
             <div class="flex justify-center text-center" v-if="store.signedIn">
                 <div class="flex justify-center md:justify-start" v-if="store.userData?.game_collection[result.id]">
-                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(result.id, store.uid)"
+                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer montserrat-regular mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(result.id, store.uid)"
                     @keyup.enter="handleRemove(result.id, store.uid)">Remove from Collection</button>
                 </div>
                 <div class="flex justify-center md:justify-start" v-else>
-                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer flex roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @keyup.enter="handleRemove(result.id, store.uid)" @click="handleAddToCollection(result.id, result.name, undefined , result.first_release_date, result.total_rating, result.platforms, store.uid )">Add to Collection</button>
+                    <button class="hover:scale-105 transition-all duration-500 cursor-pointer flex montserrat-regular mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @keyup.enter="handleRemove(result.id, store.uid)" @click="handleAddToCollection(result.id, result.name, undefined , result.first_release_date, result.total_rating, result.platforms, store.uid )">Add to Collection</button>
                 </div>
             </div>
         </div>

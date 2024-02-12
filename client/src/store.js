@@ -14,6 +14,10 @@ export const store = reactive({
     setSignedIn(status) {
         this.signedIn = status
     },
+    authInitialized: false,
+    setAuthInit(status) {
+      this.authInitialized = status
+    },
     userData: {},
     uid: '',
     setUid(userId) {

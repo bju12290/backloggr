@@ -88,7 +88,6 @@ export default {
 
   watchEffect(() => {
     const gameCollection = store.userData.game_collection;
-    console.log(gameCollection)
     uniquePlatforms.value.clear();
 
     if (gameCollection) {
@@ -129,18 +128,18 @@ export default {
 </script>
  
  <template>
-  <div class="m-3 text-light-text dark:text-dark-text">
+  <div class="montserrat-regular m-3 text-light-text dark:text-dark-text">
   <form class="mb-1">
     <label for="search" hidden>Search for a Game</label>
-    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block w-full" id="search" type="text" placeholder="Search for a game..." v-model="searchTerm"/> <br/>
+    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block w-full" id="search" type="text" placeholder="Search your collection..." v-model="searchTerm"/> <br/>
   </form>
   <form class="mb-1 flex flex-col">
-    <label for="releaseYearStart">Release Year</label>
+    <label class="montserrat-semi-bold" for="releaseYearStart">Release Year</label>
     <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearStart" placeholder="1958" v-model="releaseYearStart"/>
     <label for="releaseYearEnd" hidden>Release Year End</label>
     <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearEnd" placeholder="2023" v-model="releaseYearEnd"/>
   </form>
-  <h2>Platform: </h2>
+  <h2 class="montserrat-semi-bold">Platform</h2>
    <form class="m-1">
      <div v-for="(platform, i) in uniquePlatforms" :key="i">
        <label class="mt-100">
@@ -153,7 +152,7 @@ export default {
      </div>
    </form>
 
-   <h2>Status: </h2>
+   <h2 class="montserrat-semi-bold">Status</h2>
    <form class="m-1">
     <div></div>
     <input @change="updateStatuses('playing')" id="playingFilter" type="checkbox"/>
@@ -168,10 +167,9 @@ export default {
     <input @change="updateStatuses('dropped')" id="droppedFilter" type="checkbox"/>
     <label for="droppedFilter"> Dropped</label>
   </form>
-  <form class="mt-1">
-    <label for="sort" hidden>Sort</label>
+  <form class="mt-3">
+    <label class="montserrat-semi-bold" for="sort">Sort By</label>
     <select class="w-full roboto-small w-48 p-1 border rounded bg-light-secondary dark:bg-dark-secondary" id="sort" v-model="selectedSort" @change="updateSortValue">
-      <option value="">Sort By...</option>
       <option value="AtoZ">Name: A to Z</option>
       <option value="ZtoA">Name: Z to A</option>
       <option value="PopHighToLow">Popularity: High to Low</option>

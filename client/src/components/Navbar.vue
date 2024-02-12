@@ -30,7 +30,7 @@ const navigation = store.navigation
 </script>
 
 <template>
-  <div class="roboto-regular">
+  <div class="montserrat-semi-bold">
     <Disclosure as="nav" class="" v-slot="{ open }">
       <div class="mx-auto px-2 sm:px-6 lg:px-8 dark:bg-dark-background bg-light-background border-solid border-b-2 dark:border-dark-accent border-light-accent">
         <div class="relative flex h-16 items-center justify-between">
@@ -44,8 +44,8 @@ const navigation = store.navigation
             </DisclosureButton>
           </div>
           <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div class="flex flex-shrink-0 items-center">
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+            <div class="dark:bg-dark-background bg-light-background flex flex-shrink-0 items-center">
+              <img class="h-8 w-auto" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707694330/dark_vg_tracker_logo_d28spp.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707694330/light_vg_tracker_logo_bxspeq.png' " alt="Your Company" />
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
@@ -104,8 +104,8 @@ const navigation = store.navigation
       </div>
   
       <DisclosurePanel class="sm:hidden">
-        <div class="space-y-1 px-2 pb-3 pt-2">
-          <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
+        <div class="bg-light-secondary dark:bg-dark-secondary space-y-1 px-2 pb-3 pt-2">
+          <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-light-primary dark:bg-dark-primary text-white' : 'text-light-text dark:text-dark-text hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
         </div>
       </DisclosurePanel>
     </Disclosure>

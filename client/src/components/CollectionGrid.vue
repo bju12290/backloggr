@@ -1,12 +1,5 @@
 <!-- 
-- Add Ability to Change Game Status Under Each Game :check:
-- Show current game's status as current input selection :check:
-- Add Ability to Remove Game From Collection :check:
-- Add Ability to Select Platform :check:
-- Map over IGDB's available platforms for each game and make those the options available for users to select for platforms :check:
-- Make platforms work the same way game status does, show the currently selected platform. :check:
-- Optimize :check:
-- Create 'No Games Found' Display When No Games are Found :check:
+- Confirm Remove From Collection Popup
 -->
 <style scoped>
 </style>
@@ -14,21 +7,20 @@
 <template>
 
     <div class="mt-16">
-      <h1 class="text-light-text dark:text-dark-text text-center roboto-bold text-2xl">Your Collection</h1>
+      <h1 class="text-4xl text-light-text dark:text-dark-text text-center montserrat-bold text-2xl">Your Collection</h1>
 
-      <div class="text-light-text dark:text-dark-text lg:grid lg:grid-cols-3 gap-4">
+      <div class="text-light-text dark:text-dark-text lg:grid lg:grid-cols-3 gap-2">
         <div class="p-1" v-for="(game) in sortedGames">
-          <div class="border border-light-primary dark:border-dark-primary rounded-md 
-          bg-light-secondary dark:bg-dark-secondary p-4">
+          <div class="border rounded shadow-xl border-light-primary dark:border-dark-primary bg-light-secondary dark:bg-dark-secondary p-4">
           <div class="flex flex-row">
             <router-link :to="'/game/' + game.id">
               <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="hover:scale-110 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
             </router-link>
           <div class="p-2">
-            <h3 class="text-lg line-clamp-1 roboto-bold">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
-            <p class="line-clamp-1 roboto-regular">First Release</p>
+            <h3 class="text-lg line-clamp-1 montserrat-semi-bold">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
+            <p class="line-clamp-1 montserrat-medium">First Release</p>
             <p class="roboto-thin">{{  game.release_year }}</p>
-            <p class="line-clamp-1 roboto-regular">Review Score</p>
+            <p class="line-clamp-1 montserrat-medium">Review Score</p>
             <p class="line-clamp-1 roboto-thin">{{ gameData[game.id]?.popularity ? gameData[game.id]?.popularity?.toFixed(2) : "No Rating Found" }}</p>
           </div>
           </div>
@@ -92,12 +84,12 @@
             <div class="flex flex-col justify-center items-center text-center">
             <form @change="handlePlatform(game.id, store.userData.game_collection[game.id].platform)" @click="fetchPlatforms(game.id, store.userData.game_collection[game.id].platformIds )">
 
-              <label class="" for="platform">Select Platform:</label> <br/>
+              <label class="montserrat-medium" for="platform">Select Platform:</label> <br/>
                 <select class="w-48 p-1 border rounded bg-light-primary dark:bg-dark-primary" id="platform" name="platform" v-model="store.userData.game_collection[game.id].platform">
                   <option value="">
                     {{ 
                       store.userData.game_collection[game.id]?.platforms && store.userData.game_collection[game.id]?.platforms.length > 0
-                        ? "Select Your Platform"
+                        ? ""
                         : loadingStatus
                     }}
                   </option>
@@ -108,7 +100,7 @@
             </form>
           </div>
 
-            <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-2/3 roboto-light mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(game.id)">Remove From Collection</button>
+            <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-2/3 montserrat-medium mt-5 shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" @click="handleRemove(game.id)">Remove From Collection</button>
           </div>
           </div>
         </div>

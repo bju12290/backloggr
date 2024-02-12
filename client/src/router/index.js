@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { store } from '../store.js'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import HomeView from '../views/HomeView.vue'
 import CollectionManagerView from '../views/CollectionManagerView.vue';
 import SearchView from '../views/SearchView.vue';
@@ -39,7 +40,8 @@ const router = createRouter({
     {
       path: '/usersettings',
       name: 'user-settings',
-      component: () => import('../views/UserSettingsView.vue')
+      component: () => import('../views/UserSettingsView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/search',
@@ -57,11 +59,50 @@ const router = createRouter({
 router.afterEach((to) => {
   // Reset the current state of all navigation items
   store.navigation.forEach(navItem => navItem.current = false);
-
   // Find the navigation item that matches the current route and set it as current
   const currentNavItem = store.navigation.find(navItem => navItem.href === to.path);
   if (currentNavItem) {
     currentNavItem.current = true;
+  }
+});
+
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isLoginPage = to.name === 'login';
+  const isSignupPage = to.name === 'signup';
+
+  // Use a promise to wait for the auth state to be initialized if it's not set yet.
+  // This assumes there's a mechanism to resolve this promise once the auth state is known,
+  // for example, by listening to Firebase auth state changes.
+  const waitForAuthInitialization = new Promise((resolve) => {
+    if (store.authInit) {
+      resolve(); // If already initialized, proceed immediately.
+    } else {
+      // Listen for a one-time auth state change.
+      const unsubscribe = getAuth().onAuthStateChanged(user => {
+        store.signedIn = !!user;
+        store.authInit = true; // Ensure these states are updated accordingly.
+        unsubscribe(); // Stop listening to further changes here.
+        resolve();
+      });
+    }
+  });
+
+  await waitForAuthInitialization;
+
+  // After ensuring auth state is initialized, proceed with routing logic.
+  if (store.signedIn) {
+    if (isLoginPage || isSignupPage) {
+      next({ name: 'collection-manager' });
+    } else {
+      next();
+    }
+  } else {
+    if (requiresAuth) {
+      next({ name: 'login' });
+    } else {
+      next();
+    }
   }
 });
 

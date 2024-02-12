@@ -247,3 +247,20 @@ export const steamLibraryImport = functions.https.onRequest(async (request, resp
     response.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+export const getPopularGames = functions.https.onRequest((request, response) => {
+  cors(request, response, async () => {
+    try {
+      const steamSpyResponse = await axios.get('https://steamspy.com/api.php?request=top100in2weeks');
+      
+      // Set headers to ensure proper CORS handling on the client side
+      response.set('Access-Control-Allow-Origin', '*');
+      response.set('Access-Control-Allow-Methods', 'GET, POST');
+
+      response.json(steamSpyResponse.data);
+    } catch (error) {
+      console.error("Error fetching popular games from SteamSpy:", error);
+      response.status(500).send("Internal Server Error");
+    }
+  });
+});

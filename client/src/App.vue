@@ -13,6 +13,7 @@ const auth = getAuth()
 auth.onAuthStateChanged((user) => {
   if (user) {
     store.setSignedIn(true)
+    store.setAuthInit(true)
     const uid = user.uid
     store.setUid(uid)
     const dbRef = ref(getDatabase());
@@ -36,7 +37,7 @@ auth.onAuthStateChanged((user) => {
 </script>
 
 <template> 
-  <div :class="{ 'dark': store.theme === 'dark' }">
+  <div :class="{ 'dark': store.theme === 'dark' }" class="bg-light-background dark:bg-dark-background">
     <header>
       <div class="wrapper">
         <nav>
@@ -44,7 +45,7 @@ auth.onAuthStateChanged((user) => {
         </nav>
       </div>
     </header>
-    <div class="bg-light-background dark:bg-dark-background min-h-screen">
+    <div class="transition-all duration-300 bg-light-background dark:bg-dark-background min-h-screen">
       <RouterView />
     </div>
     </div>

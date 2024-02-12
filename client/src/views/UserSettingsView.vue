@@ -1,29 +1,29 @@
 <template>
   <notification-popup ref="notificationPopup" :bg-color="notificationColor" :message="notificationMessage"></notification-popup>
-  <div class="p-3 roboto-regular text-light-text dark:text-dark-text">
+  <div class="p-3 montserrat-medium text-light-text dark:text-dark-text">
     <div class="flex flex-col md:flex-row items-start md:items-center md:justify-center">
       
       <!-- Left Column for Profile Picture -->
       <div class="flex flex-col items-center w-full mt-16 md:w-1/2 md:pr-8">
         <img class="w-44 h-44 rounded-full object-cover" :src="store.userData.profile_picture ? store.userData.profile_picture : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1705911583/defaultpfp.jpg'" alt="Profile Picture"/>
-          <input class="mt-2 roboto-light md:w-1/2 w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="file" id="profile_picture" name="profile_picture" @change="handleFileChange"/>
-        <button @click="updateProfilePicture" class="mt-[1.7rem] md:w-1/2 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Profile Picture</button>
+          <input class="mt-2 montserrat-regular md:w-1/2 w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="file" id="profile_picture" name="profile_picture" @change="handleFileChange"/>
+        <button @click="updateProfilePicture" class="mt-[1.7rem] md:w-1/2 w-full montserrat-regular shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Profile Picture</button>
       </div>
 
       <!-- Right Column for Email and Password -->
       <div class="w-full mt-5 md:w-1/2 md:pl-8">
         <div class="mt-5">
-          <label class="roboto-black" for="email">E-Mail</label> <hr class="border-none"/>
-          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="text" id="email" name="email" v-model="email"/>
-          <button @click="handleEmailUpdate" class="md:max-w-[600px] mt-5 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update E-Mail</button>
+          <label class="montserrat-bold" for="email">E-Mail</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] monsterrat-regular w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="text" id="email" name="email" v-model="email"/>
+          <button @click="handleEmailUpdate" class="md:max-w-[600px] mt-5 w-full montserrat-regular shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update E-Mail</button>
         </div>
         
         <div class="mt-5">
-          <label class="roboto-black" for="password">Password</label> <hr class="border-none"/>
-          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="password" name="password" v-model="password"/> <hr class="border-none"/>
-          <label class="mt-3 roboto-black" for="passwordConfirm">Confirm Password</label> <hr class="border-none"/>
-          <input class="md:max-w-[600px] roboto-small w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="passwordConfirm" name="passwordConfirm" v-model="passwordConfirm"/>
-          <button @click="handlePasswordUpdate" class="md:max-w-[600px] mt-5 w-full roboto-light shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Password</button>
+          <label class="montserrat-bold" for="password">Password</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] montserrat-regular w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="password" name="password" v-model="password"/> <hr class="border-none"/>
+          <label class="mt-3 montserrat-bold" for="passwordConfirm">Confirm Password</label> <hr class="border-none"/>
+          <input class="md:max-w-[600px] montserrat-regular w-full p-1 border rounded bg-light-secondary dark:bg-dark-secondary" type="password" id="passwordConfirm" name="passwordConfirm" v-model="passwordConfirm"/>
+          <button @click="handlePasswordUpdate" class="md:max-w-[600px] mt-5 w-full montserrat-regular shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Password</button>
         </div>
       </div>
 
