@@ -64,10 +64,10 @@
       <Combobox v-model="query" v-slot="{ open }">
         <div class="relative">
           <div
-            class="relative w-full cursor-default overflow-hidden rounded-lg bg-light-secondary dark:bg-dark-secondary text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+            class="relative w-full cursor-default overflow-hidden rounded-lg bg-light-tertiary dark:bg-dark-secondary text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
           >
             <ComboboxInput
-              class="mt-1 w-full border-none py-2 pl-3 pr-10 text-sm leading-5 placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-secondary dark:bg-dark-secondary"
+              class="mt-1 w-full border-none py-2 pl-3 pr-10 text-sm leading-5 placeholder-dark-secondary dark:placeholder-light-secondary border-solid border-2 rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary"
               :displayValue="(game) => game.name"
               @change="query = $event.target.value; searchGames();"
             />
@@ -80,7 +80,7 @@
               />
             </ComboboxButton>
           </div>
-          <div class="roboto-regular" v-show="open">
+          <div class="" v-show="open">
           <TransitionRoot
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
@@ -90,7 +90,7 @@
               class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-light-primary dark:bg-dark-primary py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
             >
             <div v-if="loading" class="text-light-text dark:text-dark-text h-80 flex flex-col items-center justify-center h-full">
-                <pacman-loader></pacman-loader>
+                <pacman-loader color="#14FFEB"></pacman-loader>
                 <p>Loading</p>
             </div>
             <div class="text-light-text dark:text-dark-text" v-else>
@@ -104,14 +104,14 @@
                         <span class="block truncate text-xl">
                         <div class="grid grid-cols-2 justify-items-center place-items-center">
                           <div class="flex flex-col whitespace-normal max-sm:w-40 max-md:w-64 justify-self-start">
-                              <p class="roboto-bold">{{ game?.name }}</p>
-                              <p class="font-thin"><span class="roboto-regular">Release Date:</span> {{ new Date(game?.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
+                              <p class="">{{ game?.name }}</p>
+                              <p class="font-thin"><span class="">Release Date:</span> {{ new Date(game?.first_release_date * 1000).toLocaleDateString("en-US") }}</p>
                               <hr class="border border-light-secondary dark:border-dark-secondary" />
-                              <p class="roboto-thin line-clamp-3">{{ game?.summary }}</p>
+                              <p class="line-clamp-3">{{ game?.summary }}</p>
                               <hr class="border border-light-secondary dark:border-dark-secondary" />
-                              <p class="roboto-thin"><span class="roboto-regular">Review Score:</span> {{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</p>
+                              <p class=""><span class="">Review Score:</span> {{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</p>
                               <div v-if="store.signedIn">
-                              <form class="roboto-thin text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
+                              <form class="text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
                                 <input
                                   checked
                                   v-model="selectedStatus[game.id]"
@@ -156,8 +156,8 @@
                                 </div>
                               </form>
                               <button
-                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id],new Date(game?.first_release_date * 1000).getFullYear(), game.total_rating, game.platforms)"
-                                class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer roboto-regular border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
+                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id], game?.first_release_date, game.total_rating, game.platforms, store.uid)"
+                                class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
                               >
                                 Add to Collection
                               </button>
@@ -182,23 +182,23 @@
       </Combobox>
     </div>
     <div v-if="store.signedIn">
-    <div class="flex md:flex-row flex-col">
+    <div class="flex md:flex-row flex-col titillium-web-regular">
       <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
-        <div class="flex flex-col m-3">
+        <div class="flex flex-col justify-center items-center m-3">
           <label for="profileUrl" hidden>Steam Profile URL:</label>
-          <input class="placeholder-dark-secondary dark:placeholder-light-secondary montserrat-medium border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url"/> <br>
-          <button @click="importGames()" class="montserrat-medium mt-5 shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library From Steam</button>
+          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
+          <button @click="importGames()" class="w-[162px] titillium-web-bold shadow-md p-2 rounded border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library</button>
         </div>
       <div class="sticky top-8 pt-20">
         <SortSearchFilter />
       </div>
       </div>
-      <CollectionGrid :handleAddToCollection="handleAddToCollection" :selectedStatus="selectedStatus"/>
+      <CollectionGrid :selectedStatus="selectedStatus"/>
     </div>
   </div>
   <div v-else>
-    <h1 class="text-light-text dark:text-dark-text text-2xl roboto-bold text-center mt-16">Hey!</h1>
-    <p class="text-light-text dark:text-dark-text text-xl roboto-bold text-center mt-2">You're not signed in! 
+    <h1 class="text-light-text dark:text-dark-text text-2xl text-center mt-16">Hey!</h1>
+    <p class="text-light-text dark:text-dark-text text-xl text-center mt-2">You're not signed in! 
       <router-link to="/login/"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
       <router-link to="signup"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
       to start adding games to your collection!</p>
@@ -206,7 +206,8 @@
     </template>
   
   <script setup>
-  import { ref, watchEffect  } from 'vue'
+  import { handleAddToCollection } from '../utils/utils'
+  import { onMounted, ref, watchEffect  } from 'vue'
   import {
     Combobox,
     ComboboxInput,
@@ -226,6 +227,10 @@
 watchEffect(() => {
   uid.value = store.uid;
   // Now you can use uid.value in your component
+});
+
+onMounted(() => {
+  uid.value = store.uid
 });
 
   const loading = ref(false)
@@ -308,69 +313,6 @@ const showSuccessPopup = ref(false);
 const showErrorPopup = ref(false);
 const showUpdatePopup = ref(false);
 
-const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds) => {
-  if (gameStatus === undefined) {
-    gameStatus = "playing"
-  }
-
-  if (gamePopularity === undefined) {
-    gamePopularity = 0
-  }
-
-  if (!gameReleaseYear) {
-    gameReleaseYear = 0
-  }
-
-  if (!platformIds) {
-    platformIds = []
-  }
-  const db = getDatabase();
-  console.log(uid);
-
-  const gameRef = dbRef(db, `data/users/${uid.value}/game_collection/${gameId}`);
-
-  // Check if the document already exists
-  get(gameRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        // Document exists, it's an update
-        // You can add specific logic for updates if needed
-        showUpdatePopup.value = true;
-        showSuccessPopup.value = false;
-        showErrorPopup.value = false;
-      } else {
-        // Document doesn't exist, it's an initial addition
-        showSuccessPopup.value = true;
-        showErrorPopup.value = false;
-        showUpdatePopup.value = false;
-      }
-    })
-    .catch((error) => {
-      console.error('Error checking if document exists:', error);
-      showErrorPopup.value = true;
-      showSuccessPopup.value = false;
-      showUpdatePopup.value = false;
-    })
-    .finally(() => {
-      // Optionally, use a timeout to hide the popups after a certain duration
-      setTimeout(() => {
-        showSuccessPopup.value = false;
-        showErrorPopup.value = false;
-        showUpdatePopup.value = false;
-      }, 3000); // Adjust the duration as needed
-    });
-
-  // Perform the set operation
-  set(gameRef, {
-    game_name: gameName,
-    game_status: gameStatus,
-    platform: "Uncategorized",
-    platformIds: platformIds,
-    release_year: gameReleaseYear,
-    popularity: gamePopularity
-  });
-}
-
 const checkIsInCollection = async (gameId) => {
   // Use the same logic to check if the document exists in the collection
   const db = getDatabase();
@@ -440,9 +382,10 @@ const fetchGameDetails = async (game) => {
       gameDetails[0].id,
       gameDetails[0].name,
       undefined,
-      new Date(gameDetails[0].first_release_date * 1000).getFullYear(),
+      gameDetails[0].first_release_date,
       gameDetails[0].total_rating,
-      gameDetails[0].platforms
+      gameDetails[0].platforms,
+      store.uid
     );
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);

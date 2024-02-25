@@ -1,70 +1,98 @@
-<script setup>
+<script>
   import {store} from '../store.js'
+  import { Swiper, SwiperSlide } from 'swiper/vue';
+  import { Autoplay, EffectCreative } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/effect-creative';
+    import 'swiper/css/pagination';
+
+    export default {
+    components: {
+      Swiper,
+      SwiperSlide,
+    },
+    setup() {
+      return {
+        modules: [EffectCreative, Autoplay],
+      };
+    },
+  };
 </script>
 
 <template>
-  <div class="roboto-bold mx-3 h-[75vh] flex flex-col justify-center items-center px-4 py-8">
-    <h1 class="playfair-display-thick text-center text-3xl md:text-5xl text-light-text dark:text-dark-text mb-10">
-      Welcome to Backloggr!
-    </h1>
-    <div class="flex gap-4" v-if="store.signedIn">
-      <router-link to="/collectionmanager" class="btn bg-light-secondary dark:bg-dark-secondary hover:bg-light-accent hover:dark:bg-dark-accent text-light-text dark:text-dark-text roboto-bold py-2 px-4 rounded">
-        My Collection
-      </router-link>
-      <router-link to="/search" class="btn bg-light-secondary dark:bg-dark-secondary hover:bg-light-accent hover:dark:bg-dark-accent text-light-text dark:text-dark-text roboto-bold py-2 px-4 rounded">
-        Search Games
-      </router-link>
-    </div>
-    <div class="flex gap-4" v-else>
-      <router-link to="/login" class="text-center w-[90px] btn bg-light-secondary dark:bg-dark-secondary hover:bg-light-accent hover:dark:bg-dark-accent text-light-text dark:text-dark-text roboto-bold py-2 px-4 rounded">
-        Login
-      </router-link>
-      <router-link to="/signup" class="text-center w-[90px] btn bg-light-secondary dark:bg-dark-secondary hover:bg-light-accent hover:dark:bg-dark-accent text-light-text dark:text-dark-text roboto-bold py-2 px-4 rounded">
-        Sign Up
-      </router-link>
-    </div>
-  </div>
-  <!-- LARGE SCREEN HOW IT WORKS SECTION -->
-  <div class="mx-3 hidden md:flex roboto-bold text-light-text dark:text-dark-text roboto-bold mx-3 flex-col justify-center items-center px-4 py-8 gap-16">
-    <h1 class="playfair-display-thick text-center text-3xl md:text-5xl mb-10">How It Works</h1>
-    <div class="place-items-center grid md:grid-cols-2 h-[500px] md:gap-64">
-      <p class="lg:text-4xl text-3xl playfair-display-medium mx-3 px-4 py-8">Add Your Games</p>
-      <img class="h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_add_games_gpokhr.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774939/light_add_games_scissk.png'"/>
-    </div>
-    <div class="mt-10 mx-3 place-items-center grid md:grid-cols-2 h-[500px] md:gap-64">
-      <img class="h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_organize_games_wbjrs4.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774940/light_organize_games_dutmrq.png'"/>
-      <p class="lg:text-4xl text-3xl playfair-display-medium mx-3 px-4 py-8">Organize Easily</p>
-    </div>
-    <div class="mt-10 mx-3 place-items-center grid md:grid-cols-2 h-[500px] md:gap-64">
-      <div class="mx-3 px-4 py-8 gap-3">
-        <p class="lg:text-4xl text-3xl playfair-display-medium mx-3 px-4">Get Through Your Backlog</p>
-        <p class="lg:text-3xl text-2xl playfair-display-medium mx-3 px-4">One Game at a Time</p>
-        <p class="mx-3 px-4 montserrat-regular text-sm">Recommendation Functionality Coming Soon</p>
+  <div class="flex lg:flex-row flex-col">
+    <div class="lg:w-1/2 h-screen flex justify-center items-center">
+      <div class="text-center flex flex-col justify-center items-center">
+        <h1 class="dark:text-dark-text titillium-web-black md:text-8xl text-6xl">Welcome to Backloggr</h1>
+        <button class="text-lg rounded mt-10 w-1/2 md:w-[270px] h-[45px] titillium-web-bold bg-light-accent">Sign Up</button>
+        <button class="text-md rounded mt-3 w-1/3 md:w-[230px] h-[35px] titillium-web-bold bg-light-primary dark:bg-dark-primary">Login</button>
       </div>
-      <img class="h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_game_recommendations_uaobn4.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774939/light_game_recommendations_y2emjb.png'"/>
     </div>
-  </div>
-  <!-- MOBILE HOW IT WORKS SECTION -->
-  <div class="text-center md:hidden roboto-bold text-light-text dark:text-dark-text roboto-bold mx-3 flex-col justify-center items-center px-4 py-8">
-    <h1 class="playfair-display-thick text-center text-3xl md:text-5xl mb-10">How It Works</h1>
-    <div class="place-items-center grid h-[500px]">
-      <p class="text-3xl playfair-display-medium mx-3 px-4 py-8">Add Your Games</p>
-      <img class="max-w-[300px] h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_add_games_gpokhr.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774939/light_add_games_scissk.png'"/>
-    </div>
-    <div class="place-items-center grid h-[500px]">
-      <p class="text-3xl playfair-display-medium mx-3 px-4 py-8">Organize Easily</p>
-      <img class="max-w-[300px] h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_organize_games_wbjrs4.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774940/light_organize_games_dutmrq.png'"/>
-    </div>
-    <div class="place-items-center grid h-[500px]">
-      <div class="mx-3 px-4 py-8 gap-3">
-        <p class="text-3xl playfair-display-medium mx-3 px-4">Get Through Your Backlog</p>
-        <p class="text-2xl playfair-display-medium mx-3 px-4">One Game at a Time</p>
-        <p class="mx-3 px-4 montserrat-regular text-sm">Recommendation Functionality Coming Soon</p>
+    <div class="lg:w-1/2 h-screen flex justify-center items-center flex-col">
+      <h1 class="dark:text-dark-text titillium-web-black md:text-6xl text-4xl">How it Works</h1>
+      <div class="w-1/2 flex justify-center items-center text-center">
+        <swiper
+          :grabCursor="true"
+          :effect="'creative'"
+          :autoplay="{
+            delay: 2500,
+            disableOnInteraction: false,
+          }"
+          :creativeEffect="{
+            prev: {
+              shadow: true,
+              translate: [0, 0, -800],
+              rotate: [180, 0, 0],
+            },
+            next: {
+              shadow: true,
+              translate: [0, 0, -800],
+              rotate: [-180, 0, 0],
+            },
+          }"
+          :modules="modules"
+          class="mySwiper4"
+        >
+          <swiper-slide>
+            <div class="flex flex-row justify-center items-center w-1/2">
+              <h2 class="text-3xl titillium-web-bold dark:text-dark-text">Add Your Games</h2>
+              <img src="https://res.cloudinary.com/ddv5jvvvg/image/upload/v1708819696/light_add_games_m9ithf.png"/>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex flex-row justify-center items-center w-1/2">
+              <h2 class="text-3xl titillium-web-bold dark:text-dark-text">Organize With Ease</h2>
+              <img src="https://res.cloudinary.com/ddv5jvvvg/image/upload/v1708819697/light_organize_games_smpemn.png"/>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex flex-row justify-center items-center w-1/2">
+              <h2 class="text-3xl titillium-web-bold dark:text-dark-text">Clear Your Backlog</h2>
+              <img src="https://res.cloudinary.com/ddv5jvvvg/image/upload/v1708819696/light_game_recommendations_nuutpr.png"/>
+            </div>
+          </swiper-slide>
+        </swiper>
       </div>
-      <img class="max-w-[300px] h-auto object-contain md:object-scale-down" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774938/dark_game_recommendations_uaobn4.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707774939/light_game_recommendations_y2emjb.png'"/>
     </div>
-  </div>
-  <div class="mt-32 roboto-bold text-light-text dark:text-dark-text roboto-bold mx-3 flex flex-col justify-center items-center px-4 py-8">
-    <h1 class="playfair-display-thick text-center text-3xl md:text-5xl mb-10">News and Updates</h1>
   </div>
 </template>
+
+<style>
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px !important;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+}
+</style>

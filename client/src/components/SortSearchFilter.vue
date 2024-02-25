@@ -27,8 +27,8 @@ export default {
   const uniquePlatforms = ref(new Set());
   const selectedPlatforms = ref(store.selectedPlatforms);
   const searchTerm = ref('');
-  const releaseYearStart = ref(1958)
-  const releaseYearEnd = ref(2023)
+  const releaseYearStart = ref()
+  const releaseYearEnd = ref()
   const selectedStatuses = ref([]);
   const selectedSort = ref(store.selectedSort);
 
@@ -87,6 +87,7 @@ export default {
   })
 
   watchEffect(() => {
+    console.log(store.userData.game_collection)
     const gameCollection = store.userData.game_collection;
     uniquePlatforms.value.clear();
 
@@ -94,10 +95,8 @@ export default {
       for (const gameId in gameCollection) {
         const game = gameCollection[gameId];
         console.log(game)
-        const platform = game.platform || 'Uncategorized';
-        console.log(platform)
+        const platform = game.platform.abbreviation || 'Uncategorized';
         uniquePlatforms.value.add(platform);
-        console.log(uniquePlatforms)
       }
 
       // Convert Set to array and sort it with "Uncategorized" at the end
@@ -122,38 +121,71 @@ export default {
       releaseYearStart,
       releaseYearEnd,
       selectedSort,
+      selectedStatuses,
     };
   },
 };
 </script>
  
  <template>
-  <div class="montserrat-regular m-3 text-light-text dark:text-dark-text">
+  <div class="m-3 text-light-text dark:text-dark-text">
   <form class="mb-1">
     <label for="search" hidden>Search for a Game</label>
-    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block w-full" id="search" type="text" placeholder="Search your collection..." v-model="searchTerm"/> <br/>
+    <input class="placeholder:dark:text-dark-textcontrast placeholder:text-light-primary bg-light-tertiary dark:bg-dark-secondary mt-1 block w-full rounded-md p-1" id="search" type="text" placeholder="Search your collection..." v-model="searchTerm"/> <br/>
   </form>
   <form class="mb-1 flex flex-col">
-    <label class="montserrat-semi-bold" for="releaseYearStart">Release Year</label>
-    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearStart" placeholder="1958" v-model="releaseYearStart"/>
+    <label class="titillium-web-bold text-lg" for="releaseYearStart">Release Year</label>
+    <input class="placeholder:dark:text-dark-textcontrast placeholder:text-light-primary rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary mt-1 block" id="releaseYearStart" placeholder="1958" v-model="releaseYearStart"/>
     <label for="releaseYearEnd" hidden>Release Year End</label>
-    <input class="placeholder-dark-secondary dark:placeholder-light-secondary roboto-light border-solid border-2 border-light-accent dark:border-dark-accent rounded-md p-1 bg-light-primary dark:bg-dark-primary mt-1 block" id="releaseYearEnd" placeholder="2023" v-model="releaseYearEnd"/>
+    <input class="placeholder:dark:text-dark-textcontrast placeholder:text-light-primary rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary mt-1 block" id="releaseYearEnd" placeholder="2023" v-model="releaseYearEnd"/>
   </form>
-  <h2 class="montserrat-semi-bold">Platform</h2>
-   <form class="m-1">
-     <div v-for="(platform, i) in uniquePlatforms" :key="i">
-       <label class="mt-100">
+  <h2 class="titillium-web-bold text-lg">Platform</h2>
+   <div class="flex justify-center items-center flex-wrap m-1 gap-2 text-center">
+     <div class="" v-for="(platform, i) in uniquePlatforms" :key="i">
+      <div
+      :class="{'platform-selected': selectedPlatforms?.includes(platform)}"
+      class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updatePlatforms(platform)">
+        {{ platform }}
+      </div>
+       <!-- <label class="mt-100">
          <input
            type="checkbox"
            @change="updatePlatforms(platform)"
          />
          {{ platform }}
-       </label>
+       </label> -->
      </div>
-   </form>
+    </div>
 
-   <h2 class="montserrat-semi-bold">Status</h2>
-   <form class="m-1">
+   <h2 class="titillium-web-bold text-lg">Status</h2>
+   <div class="flex flex-wrap justify-center items-center m-1 gap-2 text-center">
+    <div 
+    :class="{'status-selected': selectedStatuses?.includes('playing')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('playing')">
+      Playing
+    </div>
+    <div 
+    :class="{'status-selected': selectedStatuses?.includes('completed')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('completed')">
+      Completed
+    </div>
+    <div 
+    :class="{'status-selected': selectedStatuses?.includes('backlog')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('backlog')">
+      Backlog
+    </div>
+    <div 
+    :class="{'status-selected': selectedStatuses?.includes('dropped')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('dropped')">
+      Dropped
+    </div>
+    <div 
+    :class="{'status-selected': selectedStatuses?.includes('never played')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('never played')">
+      Never Played
+    </div>
+   </div>
+   <!-- <form class="m-1">
     <div></div>
     <input @change="updateStatuses('playing')" id="playingFilter" type="checkbox"/>
     <label for="playingFilter"> Playing</label>
@@ -166,10 +198,10 @@ export default {
     <div></div>
     <input @change="updateStatuses('dropped')" id="droppedFilter" type="checkbox"/>
     <label for="droppedFilter"> Dropped</label>
-  </form>
+  </form> -->
   <form class="mt-3">
-    <label class="montserrat-semi-bold" for="sort">Sort By</label>
-    <select class="w-full roboto-small w-48 p-1 border rounded bg-light-secondary dark:bg-dark-secondary" id="sort" v-model="selectedSort" @change="updateSortValue">
+    <label class="titillium-web-bold text-lg" for="sort">Sort By</label>
+    <select class="w-full w-48 p-1 rounded bg-light-tertiary dark:bg-dark-secondary" id="sort" v-model="selectedSort" @change="updateSortValue">
       <option value="AtoZ">Name: A to Z</option>
       <option value="ZtoA">Name: Z to A</option>
       <option value="PopHighToLow">Popularity: High to Low</option>
@@ -181,3 +213,11 @@ export default {
   </form>
 </div>
  </template>
+
+ <style scoped>
+  .platform-selected, .status-selected {
+    background-color: #14FFEB;
+    color: #393939;
+    font-weight: 700;
+  }
+ </style>

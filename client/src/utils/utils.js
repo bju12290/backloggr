@@ -72,6 +72,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     }
   
     if (!gameReleaseYear) {
+      console.log('No Release Year')
       gameReleaseYear = 0
     }
   
@@ -82,6 +83,13 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     console.log(uid);
   
     const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
+
+    let formattedReleaseYear;
+    if (gameReleaseYear > new Date().getFullYear()) {
+      formattedReleaseYear = new Date(gameReleaseYear * 1000).getFullYear();
+    } else {
+      formattedReleaseYear = gameReleaseYear
+    }
   
     // Check if the document already exists
     get(gameRef)
@@ -115,12 +123,11 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
       });
   
     // Perform the set operation
-    set(gameRef, {
+    update(gameRef, {
       game_name: gameName,
       game_status: gameStatus,
-      platform: "Uncategorized",
       platformIds: platformIds,
-      release_year: new Date(gameReleaseYear * 1000).getFullYear(),
+      release_year: formattedReleaseYear,
       popularity: gamePopularity
     });
   }

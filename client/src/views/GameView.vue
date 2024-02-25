@@ -17,7 +17,6 @@ import 'swiper/css/pagination';
 
 const modules = [Pagination]
 
-const pacmanLoaderColor = store.theme === 'dark' ? "#2e6994" : "#6ba7d1"
 const gameId = ref(null);
 const gameDetails = ref({});
 const gameImage = ref(null)
@@ -85,7 +84,7 @@ const setupRealtimeListeners = () => {
   <notification-popup color="green" message="This is a success message!"></notification-popup>
   <div class="roboto-regular flex flex-col justify-center items-center" v-if="isLoading">
     <p class="mt-16 text-light-text dark:text-dark-text">{{ loadingStatus }}</p>
-    <pacman-loader :color="pacmanLoaderColor"></pacman-loader>
+    <pacman-loader color="#14FFEB"></pacman-loader>
   </div>
   <div class="flex justify-center items-center" v-else>
   <div class="mt-4 w-11/12 bg-opacity-75 shadow-md rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-secondary dark:bg-dark-secondary roboto-regular text-light-text dark:text-dark-text">

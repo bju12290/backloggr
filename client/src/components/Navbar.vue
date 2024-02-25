@@ -30,7 +30,7 @@ const navigation = store.navigation
 </script>
 
 <template>
-  <div class="montserrat-semi-bold">
+  <div class="titillium-web-semi-bold">
     <Disclosure as="nav" class="" v-slot="{ open }">
       <div class="mx-auto px-2 sm:px-6 lg:px-8 dark:bg-dark-background bg-light-background border-solid border-b-2 dark:border-dark-accent border-light-accent">
         <div class="relative flex h-16 items-center justify-between">
@@ -45,11 +45,11 @@ const navigation = store.navigation
           </div>
           <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div class="dark:bg-dark-background bg-light-background flex flex-shrink-0 items-center">
-              <img class="h-8 w-auto" :src="store.theme === 'dark' ? 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707694330/dark_vg_tracker_logo_d28spp.png' : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1707694330/light_vg_tracker_logo_bxspeq.png' " alt="Your Company" />
+              <a href="/"> <img class="h-8 w-auto" src="https://res.cloudinary.com/ddv5jvvvg/image/upload/v1708819696/dark_vg_tracker_logo_gtotka.png" alt="Backloggr Logo" /></a>
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
-                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'dark:bg-dark-secondary dark:text-dark-text bg-light-secondary text-light-text' : 'dark:text-dark-text text-light-text hover:bg-light-secondary hover:dark:bg-dark-secondary hover:text-light-text', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
+                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'dark:bg-dark-secondary dark:text-dark-text bg-light-primary text-light-text' : 'dark:text-dark-text text-light-text hover:bg-light-primary hover:dark:bg-dark-secondary hover:text-light-text', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
               </div>
             </div>
           </div>

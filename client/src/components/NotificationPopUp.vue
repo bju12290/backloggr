@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" :style="{ backgroundColor: bgColor }" @click="hide" class="notification-popup roboto-regular text-center">
+    <div v-if="visible" :style="{ backgroundColor: bgColor }" @click="hide" class="notification-popup roboto-regular text-centervvv">
       {{ message }}
     </div>
   </template>
