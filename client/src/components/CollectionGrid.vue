@@ -19,7 +19,7 @@
           <div class="rounded shadow-xl bg-light-secondary dark:bg-dark-secondary/50 p-4">
           <div class="flex flex-row">
             <router-link :to="'/game/' + game.id">
-              <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="hover:scale-110 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
+              <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="rounded hover:scale-105 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
             </router-link>
           <div class="p-2">
             <h3 class="text-xl line-clamp-1 titillium-web-bold">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>

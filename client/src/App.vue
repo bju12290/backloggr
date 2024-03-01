@@ -1,6 +1,7 @@
 <script setup>
 import { store } from './store'
 import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 import { RouterView } from 'vue-router'
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, child, get } from "firebase/database";
@@ -37,7 +38,7 @@ auth.onAuthStateChanged((user) => {
 </script>
 
 <template> 
-  <div :class="{ 'dark': store.theme === 'dark' }" class="bg-light-background dark:bg-dark-background">
+  <div :class="{ 'dark': store.theme === 'dark' }" class="app-container bg-light-background dark:bg-dark-background">
     <header>
       <div class="wrapper">
         <nav>
@@ -46,11 +47,26 @@ auth.onAuthStateChanged((user) => {
       </div>
     </header>
     <div class="transition-all duration-300 bg-light-background dark:bg-dark-background min-h-screen">
-      <RouterView />
+      <main class="content">
+        <RouterView />
+      </main>
     </div>
+    <Footer />
     </div>
 </template>
 
 
 <style>
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1 0 auto;
+}
 </style>

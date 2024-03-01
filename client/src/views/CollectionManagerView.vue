@@ -197,10 +197,10 @@
     </div>
   </div>
   <div v-else>
-    <h1 class="text-light-text dark:text-dark-text text-2xl text-center mt-16">Hey!</h1>
-    <p class="text-light-text dark:text-dark-text text-xl text-center mt-2">You're not signed in! 
-      <router-link to="/login/"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
-      <router-link to="signup"><span class="underline text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
+    <h1 class="titillium-web-bold text-light-text dark:text-dark-text text-4xl text-center mt-16">Hey!</h1>
+    <p class="titillium-web-semibold text-light-text dark:text-dark-text text-xl text-center mt-2">You're not signed in! 
+      <router-link to="/login/"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
+      <router-link to="signup"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
       to start adding games to your collection!</p>
   </div>
     </template>

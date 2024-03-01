@@ -5,6 +5,7 @@ import HomeView from '../views/HomeView.vue'
 import CollectionManagerView from '../views/CollectionManagerView.vue';
 import SearchView from '../views/SearchView.vue';
 import AboutView from '../views/AboutView.vue';
+import ContactView from '../views/ContactView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +53,16 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutView
+    },
+    {
+      path: '/policies',
+      name: 'policies',
+      component: AboutView
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
     }
   ]
 })

@@ -83,7 +83,7 @@ const handleSearch = async () => {
         <div class="flex justify-center items-center">
             <div class="flex-col flex justify-center items-center w-full mt-16 m-4 mb-5">
                 <label class="sr-only" for="search">Search Games</label>
-                <input placeholder="Search for a game..." @keyup.enter="handleSearch" class="shadow-md placeholder:text-light-textcontrast dark:placeholder:text-dark-textcontrast w-full md:w-3/4  rounded-md p-1 bg-light-secondary dark:bg-dark-secondary m-2 block" id="search" type="text" v-model="searchQuery"/>
+                <input placeholder="Search for a game..." @keyup.enter="handleSearch" class="shadow-md placeholder:text-light-primary dark:placeholder:text-dark-textcontrast w-full md:w-3/4  rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="search" type="text" v-model="searchQuery"/>
                 <button @click="handleSearch" class="shadow-md w-full md:w-1/4 border-solid border-2 border-light-accent dark:border-dark-accent m-2 p-2 rounded-md bg-light-accent dark:bg-dark-accent titillium-web-bold block text-dark-primary text-md">Search</button>
             </div>
         </div>
@@ -103,7 +103,7 @@ const handleSearch = async () => {
                 <!-- Image Column -->
                 <div class="flex justify-center items-center text-center w-1/8">
                     <router-link :to="'/game/' + result.id">
-                        <img class="hover:scale-105 transition-all duration-500 cursor-pointer m-1 w-64" :src="result.image">
+                        <img class="rounded hover:scale-105 transition-all duration-500 cursor-pointer m-1 w-64" :src="result.image">
                     </router-link>
                 </div>
 
