@@ -31,8 +31,8 @@
           <router-link to="/search"><button class="hover:scale-105 transition-all duration-500 text-md rounded mt-3 w-1/3 w-[230px] h-[35px] titillium-web-semibold bg-light-primary dark:bg-dark-primary">Search Games</button></router-link>
         </div>
         <div class="text-center flex flex-col justify-center items-center" v-else>
-          <router-link to="/signup/"><button class="hover:scale-105 transition-all duration-500 text-lg rounded mt-10 w-1/2 md:w-[270px] h-[45px] titillium-web-bold bg-light-accent">Sign Up</button></router-link>
-          <router-link to="/login/"><button class="hover:scale-105 transition-all duration-500 text-md rounded mt-3 w-1/3 md:w-[230px] h-[35px] titillium-web-bold bg-light-primary dark:bg-dark-primary">Login</button></router-link>
+          <router-link to="/signup/"><button class="hover:scale-105 transition-all duration-500 text-lg rounded mt-10 w-1/2 w-[270px] h-[45px] titillium-web-bold bg-light-accent">Sign Up</button></router-link>
+          <router-link to="/login/"><button class="hover:scale-105 transition-all duration-500 text-md rounded mt-3 w-1/3 w-[230px] h-[35px] titillium-web-bold bg-light-primary dark:bg-dark-primary">Login</button></router-link>
         </div>
       </div>
     </div>

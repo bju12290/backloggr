@@ -3,11 +3,17 @@
 // - Sort and Filter Functionality
 // - Autocomplete/Recommendations
 
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, onMounted } from 'vue'
 import { searchGames, fetchGameImage, handleAddToCollection, handleRemove } from '../utils/utils';
 import { store } from '../store'
 import { getDatabase, ref as dbRef, onChildAdded, onChildRemoved, onChildChanged } from 'firebase/database';
 import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+onMounted( () => {
+  AOS.init();
+})
 
 const searchResults = ref([])
 const searchQuery = ref('')
@@ -97,7 +103,7 @@ const handleSearch = async () => {
             <pacman-loader color="#14FFEB"></pacman-loader>
         </div>
         <div class="flex flex-col justify-center items-center" v-else>
-        <div class="titillium-web-regular w-11/12 md:w-3/4 bg-opacity-75 shadow-md mx-24 m-4 p-3 rounded-md bg-light-secondary dark:bg-dark-secondary" v-for="result in searchResults" :key="result.id">
+        <div class="titillium-web-regular w-11/12 md:w-3/4 bg-opacity-75 shadow-md mx-24 m-4 p-3 rounded-md bg-light-secondary dark:bg-dark-secondary" v-for="result in searchResults" :key="result.id" data-aos="fade-up">
             <div class="flex md:flex-row flex-col md:h-full">
 
                 <!-- Image Column -->

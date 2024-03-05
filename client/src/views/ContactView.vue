@@ -53,7 +53,7 @@ export default {
         const contactsRef = dbRef(db, 'contacts');
         push(contactsRef, {
           ...this.contact,
-          createdAt: Date.now() // Timestamp for sorting or querying
+          createdAt: Date.now()
         })
         .then(() => {
           alert('Your message has been sent successfully!');
@@ -68,7 +68,6 @@ export default {
       }
     },
     validateForm() {
-      // Simple validation; expand as needed
       return this.contact.name && this.contact.email && this.contact.messageType && this.contact.message;
     },
     resetForm() {

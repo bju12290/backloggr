@@ -6,8 +6,13 @@
   - Import From Excel Spreadsheet
   - Add "Get Collection Link" So Users Can Share Collection With Friends 
 -->
-
 <style scoped>
+.status-selected {
+  background-color: #14FFEB;
+  color: #393939;
+  font-weight: 650;
+}
+
 .fade-in {
   animation: fadeIn 5s;
   -webkit-animation: fadeIn 5s;
@@ -55,14 +60,14 @@
 </style>
 
 <template>
-    <div >
+    <div>
     <div v-if="showSuccessPopup" class="rounded-md fade-in" :class="{ 'popup': true, 'success-popup': true, 'active': showSuccessPopup }">Item Added to Collection Popup</div>
     <div v-if="showErrorPopup" class="rounded-md fade-in" :class="{ 'popup': true, 'error-popup': true, 'active': showErrorPopup }">Error: Item Not Added to Collection Popup</div>
     <div v-if="showUpdatePopup" class="rounded-md fade-in" :class="{ 'popup': true, 'update-popup': true, 'active': showUpdatePopup }">Item Updated Popup</div>
   </div>
-    <div class="text-light-text dark:text-dark-text relative m-auto top-7 max-lg:w-full w-1/2 center">
+    <div class="titillium-web-regular text-light-text dark:text-dark-text relative m-auto top-7 max-lg:w-full w-1/2 center">
       <Combobox v-model="query" v-slot="{ open }">
-        <div class="relative">
+        <div class="relative z-10">
           <div
             class="relative w-full cursor-default overflow-hidden rounded-lg bg-light-tertiary dark:bg-dark-secondary text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
           >
@@ -87,7 +92,7 @@
             leaveTo="opacity-0"
           >
             <ComboboxOptions
-              class="absolute mt-1 max-h-80 w-full overflow-auto rounded-md bg-light-primary dark:bg-dark-primary py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+              class="absolute mt-1 max-h-96 w-full overflow-auto rounded-md bg-light-primary dark:bg-dark-primary py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
             >
             <div v-if="loading" class="text-light-text dark:text-dark-text h-80 flex flex-col items-center justify-center h-full">
                 <pacman-loader color="#14FFEB"></pacman-loader>
@@ -111,63 +116,58 @@
                               <hr class="border border-light-secondary dark:border-dark-secondary" />
                               <p class=""><span class="">Review Score:</span> {{ game.total_rating ? game.total_rating.toFixed(2) : "No Rating Found"}}</p>
                               <div v-if="store.signedIn">
-                              <form class="text-sm tracking-tight flex gap-2 flex-wrap place-content-center mt-5 ms-1">
-                                <input
-                                  checked
-                                  v-model="selectedStatus[game.id]"
-                                  :name="'status-' + (game ? game.id : '')"
-                                  value="playing"
-                                  type="radio"
-                                />
-                                <label for="playing">Playing</label>
-                                
-                                <input 
-                                  v-model="selectedStatus[game.id]"
-                                  :name="'status-' + (game ? game.id : '')" 
-                                  value="completed" 
-                                  type="radio" 
-                                />
-                                <label for="completed">Completed</label>
-                                
-                                <input 
-                                  v-model="selectedStatus[game.id]"
-                                  :name="'status-' + (game ? game.id : '')" 
-                                  value="backlog" 
-                                  type="radio" 
-                                  />
-                                <label for="backlog">Backlog</label>
-                                
-                                <div class="flex gap-2">
-                                  <input 
-                                    v-model="selectedStatus[game.id]"
-                                    :name="'status-' + (game ? game.id : '')" 
-                                    value="dropped" 
-                                    type="radio" 
-                                  />
-                                  <label for="dropped">Dropped</label>
-
-                                  <input 
-                                    v-model="selectedStatus[game.id]"
-                                    :name="'status-' + (game ? game.id : '')" 
-                                    value="never-played" 
-                                    type="radio" 
-                                  />
-                                  <label for="never-played">Never Played</label>
-                                </div>
-                              </form>
-                              <button
-                                @click="handleAddToCollection(game.id, game.name, selectedStatus[game.id], game?.first_release_date, game.total_rating, game.platforms, store.uid)"
-                                class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-text dark:text-dark-text block"
+                                <div class="flex flex-col w-full">
+                                  <div class="flex text-center text-sm justify-center flex-wrap gap-2 my-2">
+                                    <div
+                                      class="cursor-pointer bg-light-secondary dark:bg-dark-secondary w-[100px] rounded-md"
+                                      :class="{'status-selected': selectedSearchStatus[game.id] === 'playing'}"
+                                      @click="handleSelectedSearchStatus(game.id, 'playing')"
+                                    >
+                                      Playing
+                                    </div>
+                                    <div
+                                      class="cursor-pointer bg-light-secondary dark:bg-dark-secondary w-[100px] rounded-md"
+                                      :class="{'status-selected': selectedSearchStatus[game.id] === 'completed'}"
+                                      @click="handleSelectedSearchStatus(game.id, 'completed')"
+                                    >
+                                      Completed
+                                    </div>
+                                    <div
+                                      class="cursor-pointer bg-light-secondary dark:bg-dark-secondary w-[100px] rounded-md"
+                                      :class="{'status-selected': selectedSearchStatus[game.id] === 'backlog'}"
+                                      @click="handleSelectedSearchStatus(game.id, 'backlog')"
+                                    >
+                                      Backlog
+                                    </div>
+                                    <div
+                                      class="cursor-pointer bg-light-secondary dark:bg-dark-secondary w-[100px] rounded-md"
+                                      :class="{'status-selected': selectedSearchStatus[game.id] === 'dropped'}"
+                                      @click="handleSelectedSearchStatus(game.id, 'dropped')"
+                                    >
+                                      Dropped
+                                    </div>
+                                    <div
+                                      class="cursor-pointer bg-light-secondary dark:bg-dark-secondary w-[100px] rounded-md"
+                                      :class="{'status-selected': selectedSearchStatus[game.id] === 'never-played'}"
+                                      @click="handleSelectedSearchStatus(game.id, 'never-played')"
+                                    >
+                                      Never Played
+                                    </div>
+                                  </div>
+                                  <button
+                                @click="handleAddToCollection(game.id, game.name, selectedSearchStatus[game.id], game?.first_release_date, game.total_rating, game.platforms, store.uid)"
+                                class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-textcontrast dark:text-dark-secondary block"
                               >
                                 Add to Collection
                               </button>
+                                </div>
                               <div v-if="game.isInCollection" :class="{ 'text-green-500 font-semibold': game.isInCollection }">
                                 In Collection
                               </div>
                           </div>
                         </div>
                           <div>
-                            <router-link :to="'/game/' + game.id"><img class="max-h-60 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
+                            <router-link :to="'/game/' + game.id"><img class="rounded-md max-h-80 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
                           </div>
                         </div>
                         </span>
@@ -199,8 +199,8 @@
   <div v-else>
     <h1 class="titillium-web-bold text-light-text dark:text-dark-text text-4xl text-center mt-16">Hey!</h1>
     <p class="titillium-web-semibold text-light-text dark:text-dark-text text-xl text-center mt-2">You're not signed in! 
-      <router-link to="/login/"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
-      <router-link to="signup"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
+      <router-link to="/login"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
+      <router-link to="/signup"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
       to start adding games to your collection!</p>
   </div>
     </template>
@@ -223,6 +223,12 @@
   import SortSearchFilter from '../components/SortSearchFilter.vue'
 
   const uid = ref(null);
+  const selectedSearchStatus = ref({})
+
+  const handleSelectedSearchStatus = (gameId, status) => {
+    selectedSearchStatus.value = { ...selectedSearchStatus.value, [gameId]: status };
+    console.log(selectedSearchStatus.value)
+  };
   
 watchEffect(() => {
   uid.value = store.uid;

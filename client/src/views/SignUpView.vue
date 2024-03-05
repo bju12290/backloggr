@@ -40,6 +40,8 @@ export default {
                 return 'Incorrect username or password.';
             case 'auth/missing-email':
               return 'Email field cannot be blank!'
+            case 'auth/email-already-in-use':
+              return 'Email address already in use!'
             default:
                 return 'An error occurred. Please try again.';
         }

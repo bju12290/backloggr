@@ -95,7 +95,7 @@ export default {
       for (const gameId in gameCollection) {
         const game = gameCollection[gameId];
         console.log(game)
-        const platform = game.platform.abbreviation || 'Uncategorized';
+        const platform = game.platform?.abbreviation || 'Uncategorized';
         uniquePlatforms.value.add(platform);
       }
 

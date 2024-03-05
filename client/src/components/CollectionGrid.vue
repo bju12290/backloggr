@@ -11,12 +11,18 @@
 
 <template>
 
-    <div class="mt-16 titillium-web-regular">
-      <h1 class="text-4xl text-light-text dark:text-dark-text text-center text-2xl">Your Collection</h1>
+    <div class="mt-16 titillium-web-regular w-full">
+      <h1 class="titillium-web-black text-4xl text-light-text dark:text-dark-text text-center text-2xl">Your Collection</h1>
+        <div v-if="isLoading" class="flex justify-center items-center mt-5">
+          <pacman-loader color="#14FFEB"></pacman-loader>
+        </div>
+        <div class="flex justify-center items-center text-3xl md:text-4xl titillium-web-black text-light-primary dark:text-dark-primary" v-if="!isLoading && !store.userData.game_collection">
+        <p class="p-11 text-center">You haven't added any games to your collection yet! Try adding some using the Quick Search above!</p>
+        </div>
 
-      <div class="text-light-text dark:text-dark-text lg:grid lg:grid-cols-3 gap-2">
+      <div v-else class="text-light-text dark:text-dark-text lg:grid lg:grid-cols-3 gap-2">
         <div class="p-1" v-for="(game) in sortedGames">
-          <div class="rounded shadow-xl bg-light-secondary dark:bg-dark-secondary/50 p-4">
+          <div class="rounded shadow-xl bg-light-secondary dark:bg-dark-secondary/50 p-4" data-aos="fade-up">
           <div class="flex flex-row">
             <router-link :to="'/game/' + game.id">
               <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="rounded hover:scale-105 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
@@ -61,8 +67,8 @@
               </div>
               <div 
                 class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md"
-                :class="{'status-selected': store.userData.game_collection[game.id].game_status === 'never played'}" 
-                @click="handleAddToCollection(game.id, store.userData.game_collection[game.id]?.game_name, 'never played', store.userData.game_collection[game.id].release_year, gameData[game.id]?.popularity, store.userData.game_collection[game.id].platformIds, store.uid)"
+                :class="{'status-selected': store.userData.game_collection[game.id].game_status === 'never-played'}" 
+                @click="handleAddToCollection(game.id, store.userData.game_collection[game.id]?.game_name, 'never-played', store.userData.game_collection[game.id].release_year, gameData[game.id]?.popularity, store.userData.game_collection[game.id].platformIds, store.uid)"
               >
                 Never Played
               </div>
@@ -76,11 +82,11 @@
                     {{ 
                       store.userData.game_collection[game.id]?.platforms && store.userData.game_collection[game.id]?.platforms.length > 0
                         ? ""
-                        : loadingStatus
+                        : platformLoadingStatus
                     }}
                   </option>
                   <template v-for="platform in store.userData.game_collection[game.id]?.platformIds">
-                      <option class="w-full bg-light-primary dark:bg-dark-primary" :value="platform">{{ platform.abbreviation }}</option>
+                      <option class="w-full bg-light-primary dark:bg-dark-primary" :value="platform">{{ platform?.abbreviation }}</option>
                   </template>
                 </select>
             </form>
@@ -93,10 +99,6 @@
       </div>
     </div>
 
-    <div v-if="Object.keys(filteredGames).length === 0">
-      No Games Found
-    </div>
-
   </template>
   
   <script setup>
@@ -104,12 +106,15 @@
   import { ref, onMounted, watchEffect, onUnmounted  } from 'vue';
   import { store } from '../store';
   import { getDatabase, ref as dbRef, update, get, remove, onChildAdded, onChildChanged, onChildRemoved  } from "firebase/database";
+  import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
+  import AOS from 'aos';
+  import 'aos/dist/aos.css';
   
 
   const gameData = ref({});
-  const loading = ref(true);
   const localSelectedStatus = ref({});
-  const loadingStatus = ref("")
+  const isLoading = ref(true)
+  const platformLoadingStatus = ref("")
   const props = defineProps(['selectedStatus']);
 
   const consoleLog = () => {
@@ -136,7 +141,7 @@ const updateFilteredGames = () => {
         // Apply platform filter
         const platformMatch =
           selectedPlatforms.length === 0 ||
-          selectedPlatforms.includes(game.platform.abbreviation) ||
+          selectedPlatforms.includes(game.platform?.abbreviation) ||
           (game.platform === 'Uncategorized' && selectedPlatforms.includes('Uncategorized'));
 
         const nameMatch =
@@ -257,9 +262,7 @@ watchEffect(() => {
   uid.value = store.uid;
   if (store.userData.game_collection && Object.keys(store.userData.game_collection).length > 0 && props.selectedStatus) {
     updateFilteredGames();
-  }
-  if (store.userData.game_collection && Object.keys(store.userData.game_collection).length > 0) {
-  }
+  } else {}
 });
 
 const fetchGameImage = async (gameId, gameName) => {
@@ -292,60 +295,55 @@ const fetchGameImage = async (gameId, gameName) => {
 let isListenersSetup = false;
 
 const setupRealtimeListeners = () => {
-  // Set up real-time listener for changes in the user's game collection
+  let initialDataReceived = false;
   const db = getDatabase();
   const collectionRef = dbRef(db, `data/users/${store.uid}/game_collection`);
 
-  // Set up a listener for real-time updates on individual game entries
-  const realtimeUpdate = (snapshot) => {
-    const gameData = snapshot.val();
-
-    if (gameData) {
-      // Update the store with the new game data
-      store.userData.game_collection[snapshot.key] = gameData;
-
-      // Update filtered games
-      updateFilteredGames();
-
-      //console.log(`Real-time update received for game with ID ${snapshot.key}:`);
-    } else {
-      //console.log(`No data received for game with ID ${snapshot.key}.`);
+  const dataReceived = () => {
+    if (!initialDataReceived) {
+      initialDataReceived = true;
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
     }
   };
 
-  // Listen for changes to existing game entries
+  const realtimeUpdate = (snapshot) => {
+    const gameData = snapshot.val();
+    if (gameData) {
+      store.userData.game_collection[snapshot.key] = gameData;
+      updateFilteredGames();
+      dataReceived();
+    }
+  };
+
   const changeListener = onChildChanged(collectionRef, realtimeUpdate);
 
-  // Listen for new game entries
   const addListener = onChildAdded(collectionRef, async (snapshot) => {
     const gameId = snapshot.key;
     const gameData = snapshot.val();
     const gameName = gameData.game_name;
-
-    // console.log(`Game with ID ${gameId} added.`);
-    // console.log(gameData);
-
-    // Update the store, filtered games, and fetch game image
-    store.userData.game_collection[gameId] = gameData;
-    updateFilteredGames();
-    fetchGameImage(gameId, gameName);
+    if (gameData) {
+      if (!store.userData) store.userData = {};
+      if (!store.userData.game_collection) store.userData.game_collection = {};
+      store.userData.game_collection[gameId] = gameData;
+      updateFilteredGames();
+      fetchGameImage(gameId, gameName);
+      dataReceived();
+    }
 });
 
-  // Listen for removed game entries
   const removeListener = onChildRemoved(collectionRef, (snapshot) => {
-  const gameId = snapshot.key;
-  // console.log(`Game with ID ${gameId} removed.`);
-
-  // Update the store by deleting the game with the specified ID
-  delete store.userData.game_collection[gameId];
-
-  // Update filtered games by removing the game with the specified ID
-  const { [gameId]: removedGame, ...updatedFilteredGames } = filteredGames.value;
-  filteredGames.value = updatedFilteredGames;
-
-  // console.log('Store and filtered games updated after game removal.');
-});
-  // console.log('Real-time listeners set up.');
+    const gameId = snapshot.key;
+    delete store.userData.game_collection[gameId];
+    const { [gameId]: removedGame, ...updatedFilteredGames } = filteredGames.value;
+    filteredGames.value = updatedFilteredGames;
+  });
+  setTimeout(() => {
+    if (!initialDataReceived) {
+      isLoading.value = false;
+    }
+  }, 2000); // Adjust this delay as needed
 };
 
 // Watch for changes in store.userData.game_collection and trigger initial fetch
@@ -359,6 +357,11 @@ watchEffect(() => {
 });
 
 onMounted( () => {
+  if (!isListenersSetup) {
+    isListenersSetup = true;
+    setupRealtimeListeners();
+  }
+  AOS.init();
   store.sortValue = '';
   uid.value = store.uid;
   console.log(store)
