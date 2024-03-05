@@ -1,6 +1,0 @@
-Firebase
-	- Cloud Functions
-	- Authentication
-	- Realtime Database
-Vue
-Tailwind
