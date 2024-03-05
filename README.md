@@ -28,7 +28,7 @@ Backloggr is a site intended to help users manage their game collection and back
 - **'components/'**: This directory serves as a container for both reusable components and complex single-use components. Each component has it's own corresponding Vue file in the directory. These components are served to our **'/views/'**.
 - **'views/'**: This directory serves as a container for all full-sized-pages throughout the site. All pages have a corresponding Vue file inside the **'pages/'** directory.
 - **'utils/'**: This directory serves as a container for re-usable utility functions used throughout the site.
-- **'utils/'**: This directory serves as a container for our router configuration.
+- **'router/'**: This directory serves as a container for our router configuration.
 
  #### Contact Information
 
