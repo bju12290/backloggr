@@ -13,6 +13,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "aos": "^2.3.4",
     "cloudinary": "^1.41.3",
+    "dotenv": "^16.4.5",
     "firebase": "^10.5.2",
     "lodash": "^4.17.21",
     "swiper": "^11.0.6",
