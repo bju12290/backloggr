@@ -253,7 +253,7 @@
   const selectedSearchStatus = ref({});
   const isImporting = ref(false);
   const isFinishedImporting = ref(false);
-  const progressWidth = ref('0%');
+  const progressWidth = ref('5%');
 
   const handleSelectedSearchStatus = (gameId, status) => {
     selectedSearchStatus.value = { ...selectedSearchStatus.value, [gameId]: status };
@@ -375,15 +375,24 @@ const importGames = async () => {
   isImporting.value = true;
 
   // Reset progress bar
-  progressWidth.value = '0%';
+  progressWidth.value = '5%';
 
   // Get the value from the input box
   const profileUrlInput = document.getElementById("profileUrl");
   const profileUrl = profileUrlInput.value;
 
-  // Extract the user's URL slug (assuming the URL is in the format "https://steamcommunity.com/id/username")
-  const urlParts = profileUrl.split("/");
-  const userSlug = urlParts[urlParts.length - 1];
+  let userSlug;
+
+  // Remove trailing slashes
+  const normalizedUrl = profileUrl.replace(/\/+$/, '');
+
+  // Split the URL by slashes and remove empty segments
+  const urlParts = normalizedUrl.split('/').filter(part => part.trim() !== '');
+
+  // Check if the last segment is a username or user slug
+  if (urlParts.length > 0) {
+    userSlug = urlParts[urlParts.length - 1];
+  }
 
   try {
     // Fetch user's game library
@@ -412,7 +421,7 @@ const importGames = async () => {
         // Update progress based on the fraction of games processed
         gamesProcessed++;
         const progressPercentage = Math.floor((gamesProcessed / totalGames) * 100);
-        progressWidth.value = `${progressPercentage}%`;
+        progressWidth.value = `${Math.max(progressPercentage, 5)}%`;
       }
 
       // Set progress to 100%
