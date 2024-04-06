@@ -13,6 +13,19 @@
 
     <div class="mt-16 titillium-web-regular w-full">
       <h1 class="titillium-web-black text-4xl text-light-text dark:text-dark-text text-center text-2xl">Your Collection</h1>
+      <div v-if="bulkEditing" class="flex flex-row mt-5 mb-2 gap-2">
+        <form @change="performBulkOperation('updateStatus')" class="flex flex-row">
+          <select class="p-1 rounded-md bg-light-tertiary dark:bg-dark-tertiary" id="bulkStatus" name="bulkStatus" v-model="localSelectedStatus">
+            <option class="bg-light-primary dark:bg-dark-primary" value="playing">Playing</option>
+            <option class="bg-light-primary dark:bg-dark-primary" value="completed">Completed</option>
+            <option class="bg-light-primary dark:bg-dark-primary" value="backlog">Backlog</option>
+            <option class="bg-light-primary dark:bg-dark-primary" value="dropped">Dropped</option>
+            <option class="bg-light-primary dark:bg-dark-primary" value="never-played">Never Played</option>
+          </select>
+        </form>
+          <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-1/6 shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline border-solid border-2 border-light-warning bg-light-warning dark:text-dark-primary titillium-web-bold" @click="performBulkOperation('delete')">Remove Selected</button>
+          <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-1/6 shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline border-solid border-2 border-light-accent bg-light-accent dark:text-dark-primary titillium-web-bold" @click="performBulkOperation('clear')">Clear Selection</button>
+        </div>
         <div v-if="isLoading" class="flex justify-center items-center mt-5">
           <pacman-loader color="#14FFEB"></pacman-loader>
         </div>
@@ -24,6 +37,7 @@
         <div class="p-1" v-for="(game) in sortedGames">
           <div class="rounded shadow-xl bg-light-secondary dark:bg-dark-secondary/50 p-4" data-aos="fade-up">
           <div class="flex flex-row">
+            <input class="absolute top-0 right-0 m-2" type="checkbox" :id="'game-checkbox-' + game.id" :value="game.id" v-model="selectedGames" @change="toggleSelection()">
             <router-link :to="'/game/' + game.id">
               <img :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="rounded hover:scale-105 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
             </router-link>
@@ -91,7 +105,6 @@
                 </select>
             </form>
           </div>
-
             <button class="hover:scale-105 transition-all duration-500 cursor-pointer self-center w-full md:w-2/3 mt-5 shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent dark:text-dark-primary titillium-web-semibold" @click="handleRemove(game.id)">Remove From Collection</button>
           </div>
           </div>
@@ -110,9 +123,10 @@
   import AOS from 'aos';
   import 'aos/dist/aos.css';
   
-
+  const selectedGames = ref([]);
+  const bulkEditing = ref(false)
   const gameData = ref({});
-  const localSelectedStatus = ref({});
+  const localSelectedStatus = ref('');
   const isLoading = ref(true)
   const platformLoadingStatus = ref("")
   const props = defineProps(['selectedStatus']);
@@ -130,6 +144,37 @@
 const updateGameStatus = (gameId, status) => {
   store.userData.game_collection[gameId].game_status = status
 }
+
+const toggleSelection = () => {
+  console.log(selectedGames.value.length)
+  if (selectedGames.value.length > 0) {
+    bulkEditing.value = true
+  } else {
+    bulkEditing.value = false
+  }
+};
+
+const performBulkOperation = (operation) => {
+  switch (operation) {
+    case 'delete':
+      selectedGames.value.forEach(gameId => {
+        handleRemove(gameId)
+      });
+    case 'updateStatus':
+      selectedGames.value.forEach(gameId => {
+        console.log(localSelectedStatus.value)
+        updateGameStatus(gameId, localSelectedStatus.value);
+      });
+    case 'clear':
+    selectedGames.value.forEach(gameId => {
+      selectedGames.value = [];
+      bulkEditing.value = false;
+    });
+      break;
+    // Add other bulk operation cases as needed
+  }
+ // Clear selected games array after operation
+};
 
 const updateFilteredGames = () => {
   const selectedPlatforms = store.selectedPlatforms;

@@ -1,4 +1,5 @@
 import { getDatabase, ref as dbRef, set, get, remove, update } from "firebase/database";
+import { store } from '../store.js'
 
 export const fetchGameDetailsById = async (gameId) => {
     try {
@@ -63,10 +64,17 @@ export const fetchPlatforms = async (gameId, platformIds) => {
 }
 
 export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid, steamAppId = null) => {
-    if (gameStatus === undefined) {
-      gameStatus = "playing"
-    }
+  const db = getDatabase();
+  const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
   
+    if (gameStatus === undefined) {
+      if (store.userData.game_collection[gameId]?.game_status) {
+        gameStatus = store.userData.game_collection[gameId].game_status;
+      } else {
+        gameStatus = "playing";
+      }
+    }
+
     if (gamePopularity === undefined) {
       gamePopularity = 0
     }
@@ -79,10 +87,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     if (!platformIds) {
       platformIds = []
     }
-    const db = getDatabase();
     console.log(uid);
-  
-    const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
 
     let formattedReleaseYear;
     if (gameReleaseYear > new Date().getFullYear()) {
@@ -129,7 +134,8 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
       game_status: gameStatus,
       platformIds: platformIds,
       release_year: formattedReleaseYear,
-      popularity: gamePopularity
+      popularity: gamePopularity,
+      selected: false
     });
   }
 

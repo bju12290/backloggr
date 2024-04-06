@@ -18,6 +18,7 @@ export default {
            secondary: '#8F9191',
            tertiary: '#6C7894',
            accent: '#14FFEB',
+           warning: '#ff4545',
          },
          dark: {
            text: '#BAE0FC',

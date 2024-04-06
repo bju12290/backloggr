@@ -209,7 +209,7 @@
           <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
             <div id="progress" class="progress bg-dark-accent" :style="{ width: progressWidth }"></div>
           </div>
-          <p class="titillium-web-light text-center">Please remain on this page while the process is in progress.</p>
+          <p class="titillium-web-light text-center dark:text-dark-text">Please remain on this page while the process is in progress.</p>
         </div>
         <div v-if="isFinishedImporting" class="w-98% m-2 block">
           <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
