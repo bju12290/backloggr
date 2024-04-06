@@ -202,12 +202,18 @@
       <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
         <div class="flex flex-col justify-center items-center m-3">
           <label for="profileUrl" hidden>Steam Profile URL:</label>
-          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast text-light-primary text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
+          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast text-light-primary dark:text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
           <button @click="importGames()" class="w-[162px] titillium-web-bold shadow-md p-2 rounded border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library</button>
         </div>
-        <div class="w-98% m-2 block">
-          <div class="progress-bar bg-dark-primary">
+        <div v-if="isImporting" class="w-98% m-2 block">
+          <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
             <div id="progress" class="progress bg-dark-accent" :style="{ width: progressWidth }"></div>
+          </div>
+          <p class="titillium-web-light text-center">Please remain on this page while the process is in progress.</p>
+        </div>
+        <div v-if="isFinishedImporting" class="w-98% m-2 block">
+          <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
+            <div id="progress" class="progress bg-dark-accent text-center titillium-web-semibold" style="width: 100%">Importing Complete</div>
           </div>
         </div>
       <div class="sticky top-8 pt-20">
@@ -244,8 +250,10 @@
   import SortSearchFilter from '../components/SortSearchFilter.vue'
 
   const uid = ref(null);
-  const selectedSearchStatus = ref({})
-  const progressWidth = ref('0%')
+  const selectedSearchStatus = ref({});
+  const isImporting = ref(false);
+  const isFinishedImporting = ref(false);
+  const progressWidth = ref('0%');
 
   const handleSelectedSearchStatus = (gameId, status) => {
     selectedSearchStatus.value = { ...selectedSearchStatus.value, [gameId]: status };
@@ -259,6 +267,7 @@ watchEffect(() => {
 
 onMounted(() => {
   uid.value = store.uid
+  console.log(isImporting)
 });
 
   const loading = ref(false)
@@ -355,6 +364,16 @@ const checkIsInCollection = async (gameId) => {
 };
 
 const importGames = async () => {
+
+  // Check if an import process is already ongoing
+  if (isImporting.value) {
+    console.log('An import process is already in progress.');
+    return;
+  }
+
+  isFinishedImporting.value = false;
+  isImporting.value = true;
+
   // Reset progress bar
   progressWidth.value = '0%';
 
@@ -404,6 +423,10 @@ const importGames = async () => {
   } catch (error) {
     console.error('Error:', error.message);
     // Handle errors, e.g., show an error message to the user
+  } finally {
+    // Reset the flag to indicate that the import process has finished
+    isImporting.value = false;
+    isFinishedImporting.value = true;
   }
 };
 
