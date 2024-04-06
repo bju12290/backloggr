@@ -180,8 +180,8 @@ export default {
       Dropped
     </div>
     <div 
-    :class="{'status-selected': selectedStatuses?.includes('never played')}"
-    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('never played')">
+    :class="{'status-selected': selectedStatuses?.includes('never-played')}"
+    class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md" @click="updateStatuses('never-played')">
       Never Played
     </div>
    </div>

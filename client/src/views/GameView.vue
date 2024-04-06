@@ -80,7 +80,6 @@ const setupRealtimeListeners = () => {
         }
         });
 </script>
-
 <template>
   <notification-popup bgColor="green" message="This is a success message!"></notification-popup>
   <div class="titillium-web-regular flex flex-col justify-center items-center" v-if="isLoading">

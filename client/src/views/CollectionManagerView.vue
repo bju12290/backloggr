@@ -57,6 +57,22 @@
 .popup.active {
   opacity: 1;
 }
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  border-radius: 15px; /* Half of height to make it round */
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 15px; /* Half of height to make it round */
+  transition: width 0.3s ease; /* Smooth transition effect */
+}
 </style>
 
 <template>
@@ -186,8 +202,13 @@
       <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
         <div class="flex flex-col justify-center items-center m-3">
           <label for="profileUrl" hidden>Steam Profile URL:</label>
-          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
+          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast text-light-primary text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
           <button @click="importGames()" class="w-[162px] titillium-web-bold shadow-md p-2 rounded border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library</button>
+        </div>
+        <div class="w-98% m-2 block">
+          <div class="progress-bar bg-dark-primary">
+            <div id="progress" class="progress bg-dark-accent" :style="{ width: progressWidth }"></div>
+          </div>
         </div>
       <div class="sticky top-8 pt-20">
         <SortSearchFilter />
@@ -224,6 +245,7 @@
 
   const uid = ref(null);
   const selectedSearchStatus = ref({})
+  const progressWidth = ref('0%')
 
   const handleSelectedSearchStatus = (gameId, status) => {
     selectedSearchStatus.value = { ...selectedSearchStatus.value, [gameId]: status };
@@ -320,7 +342,6 @@ const showErrorPopup = ref(false);
 const showUpdatePopup = ref(false);
 
 const checkIsInCollection = async (gameId) => {
-  // Use the same logic to check if the document exists in the collection
   const db = getDatabase();
   const gameRef = dbRef(db, `data/users/${uid.value}/game_collection/${gameId}`);
 
@@ -334,6 +355,9 @@ const checkIsInCollection = async (gameId) => {
 };
 
 const importGames = async () => {
+  // Reset progress bar
+  progressWidth.value = '0%';
+
   // Get the value from the input box
   const profileUrlInput = document.getElementById("profileUrl");
   const profileUrl = profileUrlInput.value;
@@ -343,7 +367,7 @@ const importGames = async () => {
   const userSlug = urlParts[urlParts.length - 1];
 
   try {
-    // Use Fetch to send the userSlug to the server
+    // Fetch user's game library
     const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/steamLibraryImport?query=${userSlug}`, {
       method: 'GET',
     });
@@ -357,10 +381,23 @@ const importGames = async () => {
 
     // Check if the 'games' array exists in the response
     if (steamLibraryData && steamLibraryData.games && Array.isArray(steamLibraryData.games)) {
-      // Iterate through game batches
+      // Calculate total number of games to import
+      const totalGames = steamLibraryData.games.length;
+      let gamesProcessed = 0;
+
+      // Iterate through games to import
       for (const game of steamLibraryData.games) {
-        await fetchGameDetails(game);
+        // Fetch game details
+        await fetchGameDetails(game, game.appid);
+        
+        // Update progress based on the fraction of games processed
+        gamesProcessed++;
+        const progressPercentage = Math.floor((gamesProcessed / totalGames) * 100);
+        progressWidth.value = `${progressPercentage}%`;
       }
+
+      // Set progress to 100%
+      progressWidth.value = '100%';
     } else {
       console.error('Invalid or missing "games" array in the server response');
     }
@@ -371,7 +408,7 @@ const importGames = async () => {
 };
 
 // Function to fetch additional details for a single game
-const fetchGameDetails = async (game) => {
+const fetchGameDetails = async (game, steamAppId) => {
   try {
     // Modify the URL and parameters based on your endpoint
     const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${game.name}`, {
@@ -391,7 +428,8 @@ const fetchGameDetails = async (game) => {
       gameDetails[0].first_release_date,
       gameDetails[0].total_rating,
       gameDetails[0].platforms,
-      store.uid
+      store.uid,
+      steamAppId 
     );
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);

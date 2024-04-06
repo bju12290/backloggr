@@ -62,7 +62,7 @@ export const fetchPlatforms = async (gameId, platformIds) => {
       
 }
 
-export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid) => {
+export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid, steamAppId = null) => {
     if (gameStatus === undefined) {
       gameStatus = "playing"
     }
@@ -124,6 +124,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
   
     // Perform the set operation
     update(gameRef, {
+      steamAppId: steamAppId,
       game_name: gameName,
       game_status: gameStatus,
       platformIds: platformIds,
