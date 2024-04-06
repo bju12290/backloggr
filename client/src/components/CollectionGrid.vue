@@ -115,7 +115,7 @@
   </template>
   
   <script setup>
-  import { handleAddToCollection } from '../utils/utils'
+  import { handleAddToCollection, handleUpdate } from '../utils/utils'
   import { ref, onMounted, watchEffect, onUnmounted  } from 'vue';
   import { store } from '../store';
   import { getDatabase, ref as dbRef, update, get, remove, onChildAdded, onChildChanged, onChildRemoved  } from "firebase/database";
@@ -163,7 +163,7 @@ const performBulkOperation = (operation) => {
     case 'updateStatus':
       selectedGames.value.forEach(gameId => {
         console.log(localSelectedStatus.value)
-        updateGameStatus(gameId, localSelectedStatus.value);
+        handleUpdate(gameId, localSelectedStatus.value, store.uid);
       });
     case 'clear':
     selectedGames.value.forEach(gameId => {
@@ -173,7 +173,6 @@ const performBulkOperation = (operation) => {
       break;
     // Add other bulk operation cases as needed
   }
- // Clear selected games array after operation
 };
 
 const updateFilteredGames = () => {
