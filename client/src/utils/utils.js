@@ -37,7 +37,7 @@ export const fetchGameImage = async (gameId, gameName) => {
         // Update the gameData structure
         return artTypeData.data[0]?.url || "https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg";
       } else {
-        console.log(`SteamGridDB data not found for game ${gameName}.`);
+        //console.log(`SteamGridDB data not found for game ${gameName}.`);
       }
     } catch (error) {
       console.error(`Error fetching image for game ${gameName}:`, error);
@@ -54,7 +54,7 @@ export const fetchPlatforms = async (gameId, platformIds) => {
         // Map the response to platformData array
         platformData = platforms.map(platform => platform.abbreviation).filter(abbreviation => abbreviation);
     
-        console.log(`Updated platform data for the game with ID ${gameId}:`, platformData);
+        //console.log(`Updated platform data for the game with ID ${gameId}:`, platformData);
       } catch (error) {
         console.error(`Error fetching platform data for the game with ID ${gameId}:`, error);
       } finally {
@@ -80,14 +80,14 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     }
   
     if (!gameReleaseYear) {
-      console.log('No Release Year')
+      //console.log('No Release Year')
       gameReleaseYear = 0
     }
   
     if (!platformIds) {
       platformIds = []
     }
-    console.log(uid);
+    //console.log(uid);
 
     let formattedReleaseYear;
     if (gameReleaseYear > new Date().getFullYear()) {
@@ -145,7 +145,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
 
     remove(gameRef)
     .then(() => {
-      console.log(`Game with ID ${gameId} removed successfully.`);
+      //console.log(`Game with ID ${gameId} removed successfully.`);
     })
     .catch((error) => {
       console.error(`Error removing game with ID ${gameId}: ${error.message}`);
@@ -155,13 +155,13 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
   export const handleUpdate = (gameId, value, uid) => {
     const db = getDatabase();
     const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
-    console.log(value)
+    //console.log(value)
     if (value === "playing" || value === "completed" || value === "backlog" || value === "dropped" || value === "never-played") {
       update(gameRef, {
         game_status: value,
       })
       .then(() => {
-        console.log(`Game status for game with ID ${gameId} updated successfully.`);
+        //console.log(`Game status for game with ID ${gameId} updated successfully.`);
       })
       .catch((error) => {
         console.error(`Error updating game status for game with ID ${gameId}: ${error.message}`);
@@ -171,7 +171,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
         platform: value,
     })
     .then(() => {
-      console.log(`Platform for game with ID ${gameId} updated successfully.`);
+      //console.log(`Platform for game with ID ${gameId} updated successfully.`);
       })
       .catch((error) => {
       console.error(`Error updating platform for game with ID ${gameId}: ${error.message}`);
@@ -209,7 +209,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
 
         const searchResults = resultsWithArtType;
 
-        console.log(searchResults);
+        //console.log(searchResults);
         return searchResults; // Move the return statement inside the async block
     } catch (error) {
         console.error('Error fetching game data:', error);

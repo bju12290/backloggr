@@ -58,4 +58,5 @@ export const store = reactive({
       this.sortValue = value
     },
     theme: 'light',
+    view: 'grid',
 })

@@ -87,14 +87,14 @@ export default {
   })
 
   watchEffect(() => {
-    console.log(store.userData.game_collection)
+    //console.log(store.userData.game_collection)
     const gameCollection = store.userData.game_collection;
     uniquePlatforms.value.clear();
 
     if (gameCollection) {
       for (const gameId in gameCollection) {
         const game = gameCollection[gameId];
-        console.log(game)
+        //console.log(game)
         const platform = game.platform?.abbreviation || 'Uncategorized';
         uniquePlatforms.value.add(platform);
       }

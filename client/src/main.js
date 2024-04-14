@@ -9,7 +9,9 @@ import { store } from './store.js'
 export const provider = new GoogleAuthProvider()
 
 const savedTheme = localStorage.getItem('theme') || 'light'; // Default to 'light' if nothing is saved
+const savedView = localStorage.getItem('view') || 'grid';
 store.theme = savedTheme
+store.view = savedView
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

@@ -209,7 +209,7 @@
           <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
             <div id="progress" class="progress bg-dark-accent" :style="{ width: progressWidth }"></div>
           </div>
-          <p class="titillium-web-light text-center dark:text-dark-text">Please remain on this page while the process is in progress.</p>
+            <p class="titillium-web-light text-center dark:text-dark-text">Please remain on this page while the process is in progress.</p>
         </div>
         <div v-if="isFinishedImporting" class="w-98% m-2 block">
           <div class="progress-bar dark:bg-dark-primary bg-light-secondary">
@@ -220,7 +220,31 @@
         <SortSearchFilter />
       </div>
       </div>
-      <CollectionGrid :selectedStatus="selectedStatus"/>
+      <CollectionGrid :selectedStatus="selectedStatus" :view="store.view"/>
+      <div class="absolute top-[10.75rem] right-1">
+        <div v-if="!isSmallScreen" class="flex bg-light-primary dark:bg-dark-primary rounded-md">
+          <div @click="isSmallScreen.value ? null : setView('grid')" class="rounded-l-md transition-all duration-500 cursor-pointer" :class="{ 'bg-light-secondary dark:bg-dark-secondary': store.view === 'grid'}">
+            <svg width="35" height="35" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="9.96814" y="16.0603" width="37.1365" height="29.7092" rx="4" fill="#14FFEB"/>
+            <rect x="52.8954" y="16.0603" width="37.1365" height="29.7092" rx="4" fill="#14FFEB"/>
+            <rect x="52.8954" y="54.2305" width="37.1365" height="29.7092" rx="4" fill="#14FFEB"/>
+            <rect x="9.96814" y="54.2305" width="37.1365" height="29.7092" rx="4" fill="#14FFEB"/>
+            </svg>
+          </div>
+          <div @click="isSmallScreen.value ? null : setView('list')" class="rounded-r-md transition-all duration-500 cursor-pointer" :class="{ 'bg-light-secondary dark:bg-dark-secondary': store.view === 'list' }">
+            <svg width="35" height="35" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="24.8838" y="14.0657" width="69.2179" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="5.89832" y="14.0657" width="12.7661" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="24.8838" y="33.3785" width="69.2179" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="5.89832" y="33.3785" width="12.7661" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="24.8838" y="52.6914" width="69.2179" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="5.89832" y="52.6914" width="12.7661" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="24.8838" y="72.0044" width="69.2179" height="13.9299" rx="4" fill="#14FFEB"/>
+              <rect x="5.89832" y="72.0044" width="12.7661" height="13.9299" rx="4" fill="#14FFEB"/>
+            </svg>
+          </div>
+          </div>
+      </div>
     </div>
   </div>
   <div v-else>
@@ -233,8 +257,8 @@
     </template>
   
   <script setup>
-  import { handleAddToCollection } from '../utils/utils'
-  import { onMounted, ref, watchEffect  } from 'vue'
+  import { handleAddToCollection, handleUpdate } from '../utils/utils'
+  import { onMounted, ref, watchEffect, watch  } from 'vue'
   import {
     Combobox,
     ComboboxInput,
@@ -254,20 +278,39 @@
   const isImporting = ref(false);
   const isFinishedImporting = ref(false);
   const progressWidth = ref('5%');
+  const isSmallScreen = ref(window.innerWidth < 1071);
+
+const updateScreenWidth = () => {
+  isSmallScreen.value = window.innerWidth < 1071;
+};
 
   const handleSelectedSearchStatus = (gameId, status) => {
     selectedSearchStatus.value = { ...selectedSearchStatus.value, [gameId]: status };
-    console.log(selectedSearchStatus.value)
+    //console.log(selectedSearchStatus.value)
   };
+
+  const setView = (val) => {
+    store.view = val;
+    localStorage.setItem('view', val);
+};
   
 watchEffect(() => {
   uid.value = store.uid;
   // Now you can use uid.value in your component
 });
 
+watch(isSmallScreen, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    setView('grid'); // Automatically set to grid view on small screens
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  window.addEventListener('resize', updateScreenWidth);
+});
+
 onMounted(() => {
   uid.value = store.uid
-  console.log(isImporting)
 });
 
   const loading = ref(false)
@@ -463,6 +506,7 @@ const fetchGameDetails = async (game, steamAppId) => {
       store.uid,
       steamAppId 
     );
+    handleUpdate(gameDetails[0].id, {abbreviation: "PC", id: 6, name: "PC (Microsoft Windows)"}, store.uid )
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);
     // Handle errors, e.g., log the error or show an error message to the user
