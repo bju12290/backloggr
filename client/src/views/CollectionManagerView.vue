@@ -171,7 +171,7 @@
                                     </div>
                                   </div>
                                   <button
-                                @click="handleAddToCollection(game.id, game.name, selectedSearchStatus[game.id], game?.first_release_date, game.total_rating, game.platforms, store.uid)"
+                                @click="handleAddToCollection(game.id, game.name, selectedSearchStatus[game.id], game?.first_release_date, game.total_rating, game.platforms, store.uid, null, game.genres[0].name)"
                                 class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer border-solid border-2 border-light-accent dark:border-dark-accent m-2 bg-light-accent dark:bg-dark-accent text-light-textcontrast dark:text-dark-secondary block"
                               >
                                 Add to Collection
@@ -496,7 +496,12 @@ const fetchGameDetails = async (game, steamAppId) => {
 
     const gameDetails = await response.json();
     console.log(`Details for ${game.name}:`, gameDetails);
-    handleAddToCollection(
+    const releaseDate = new Date(gameDetails[0].first_release_date * 1000); // Convert to milliseconds
+    const currentDate = new Date();
+    if (releaseDate > currentDate) {
+      console.log('Release Date for this game is in the future, skipping.')
+    } else {
+      handleAddToCollection(
       gameDetails[0].id,
       gameDetails[0].name,
       undefined,
@@ -504,8 +509,10 @@ const fetchGameDetails = async (game, steamAppId) => {
       gameDetails[0].total_rating,
       gameDetails[0].platforms,
       store.uid,
-      steamAppId 
+      steamAppId,
+      gameDetails[0].genres[0].name,
     );
+    }
     handleUpdate(gameDetails[0].id, {abbreviation: "PC", id: 6, name: "PC (Microsoft Windows)"}, store.uid )
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);

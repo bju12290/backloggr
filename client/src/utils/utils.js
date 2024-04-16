@@ -63,7 +63,7 @@ export const fetchPlatforms = async (gameId, platformIds) => {
       
 }
 
-export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid, steamAppId = null) => {
+export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid, steamAppId = null, genre = '') => {
   const db = getDatabase();
   const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
   
@@ -135,6 +135,7 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
       platformIds: platformIds,
       release_year: formattedReleaseYear,
       popularity: gamePopularity,
+      genre: genre,
       selected: false
     });
   }

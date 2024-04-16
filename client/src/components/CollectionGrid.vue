@@ -205,7 +205,7 @@
             <p class="line-clamp-1 titillium-web-light">{{ gameData[game.id]?.popularity ? gameData[game.id]?.popularity?.toFixed(2) : "No Rating Found" }}</p>
           </div>
           </div>
-          <div class="flex flex-col w-full absolute top-11 justify-end items-end">
+          <div class="flex flex-col w-3/4 absolute top-11 justify-end items-end right-0">
             <div class="flex text-center flex-wrap gap-2 my-2 justify-end mx-5">
               <div
                 class="cursor-pointer bg-light-primary dark:bg-dark-primary w-[100px] rounded-md"
@@ -288,7 +288,7 @@
   const platformLoadingStatus = ref("")
   const props = defineProps(['selectedStatus', 'view']);
   const bulkDeleting = ref(false)
-  const isSmallScreen = ref(window.innerWidth < 1071);
+
 
   const consoleLog = () => {
     console.log(filteredGames.value)

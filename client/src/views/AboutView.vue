@@ -147,6 +147,20 @@
                     <rect x="35" y="83" width="1" height="8" fill="#14FFEB"/>
                 </svg>
             </div>
+            <div class="hover:scale-105 transition-all duration-500 flex flex-col justify-center items-center p-6 rounded-lg bg-light-secondary dark:bg-dark-secondary aspect-square w-1/4 min-w-[250px]">
+                <p>User Statistics Page</p>
+                <svg width="300" height="250" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="92" width="90" height="3" rx="1.5" fill="#14FFEB"/>
+                    <rect x="5" y="95" width="90" height="3" rx="1.5" transform="rotate(-90 5 95)" fill="#14FFEB"/>
+                    <rect x="10" y="79" width="9" height="14" rx="1" fill="#14FFEB"/>
+                    <rect x="23" y="65" width="9" height="28" rx="1" fill="#14FFEB"/>
+                    <rect x="37" y="52" width="9" height="41" rx="1" fill="#14FFEB"/>
+                    <rect x="51" y="72" width="9" height="23" rx="1" fill="#14FFEB"/>
+                    <rect x="65" y="52" width="9" height="41" rx="1" fill="#14FFEB"/>
+                    <rect x="79" y="34" width="9" height="59" rx="1" fill="#14FFEB"/>
+                    <path d="M15 68L40.5 36.5L56 55L83.5 19" stroke="#14FFEB" stroke-width="3"/>
+                </svg>
+            </div>
         </div>
         <h2 class="md:text-left text-center text-light-text dark:text-dark-text pt-24 md:pl-16 titillium-web-black text-4xl md:text-7xl">My Story</h2>
         <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">
@@ -199,17 +213,24 @@
                 </svg>
             </div>
             <div class="hover:scale-105 transition-all duration-500 flex flex-col justify-center items-center p-6 rounded-lg bg-light-secondary dark:bg-dark-secondary aspect-square w-1/4 min-w-[250px]">
-                <p>User Statistics Page</p>
-                <svg width="300" height="250" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="5" y="92" width="90" height="3" rx="1.5" fill="#14FFEB"/>
-                    <rect x="5" y="95" width="90" height="3" rx="1.5" transform="rotate(-90 5 95)" fill="#14FFEB"/>
-                    <rect x="10" y="79" width="9" height="14" rx="1" fill="#14FFEB"/>
-                    <rect x="23" y="65" width="9" height="28" rx="1" fill="#14FFEB"/>
-                    <rect x="37" y="52" width="9" height="41" rx="1" fill="#14FFEB"/>
-                    <rect x="51" y="72" width="9" height="23" rx="1" fill="#14FFEB"/>
-                    <rect x="65" y="52" width="9" height="41" rx="1" fill="#14FFEB"/>
-                    <rect x="79" y="34" width="9" height="59" rx="1" fill="#14FFEB"/>
-                    <path d="M15 68L40.5 36.5L56 55L83.5 19" stroke="#14FFEB" stroke-width="3"/>
+                <p>Social Features</p>
+                <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="26.3437" cy="29.4115" r="13.4417" stroke="#14FFEB"/>
+<circle cx="67.1285" cy="57.9251" r="16.6285" stroke="#14FFEB"/>
+<path d="M37.8869 68.757L51.4227 63.6168" stroke="#14FFEB"/>
+<circle cx="25.321" cy="70.8442" r="12.4191" stroke="#14FFEB"/>
+<circle cx="75.4195" cy="88.2195" r="8.8375" fill="#14FFEB"/>
+<circle cx="60.4089" cy="22.1894" r="6.7196" fill="#14FFEB"/>
+<path d="M37.3729 37.4021L53.3074 48.3677" stroke="#14FFEB"/>
+<circle cx="67.1285" cy="50" r="5.71152" fill="#14FFEB"/>
+<rect x="61.6732" y="53.5826" width="11.1668" height="19.3949" rx="5.58342" fill="#14FFEB"/>
+<circle cx="26.3437" cy="22.4927" r="4.57743" fill="#14FFEB"/>
+<rect x="21.9716" y="25.3639" width="8.94954" height="15.5438" rx="4.47477" fill="#14FFEB"/>
+<circle cx="25.321" cy="65.8445" r="3.30776" fill="#14FFEB"/>
+<rect x="22.1617" y="67.9193" width="6.46715" height="11.2323" rx="3.23358" fill="#14FFEB"/>
+<path d="M39.429 25.9224L54.3354 23.0097" stroke="#14FFEB"/>
+<path d="M25.0366 58.3054L26.0646 42.8849" stroke="#14FFEB"/>
+<path d="M71.81 73.6117L73.7837 82.5613" stroke="#14FFEB"/>
                 </svg>
             </div>
         </div>

@@ -45,7 +45,7 @@ export const store = reactive({
     setReleaseYearStart(value) {
       this.releaseYearStart = value
     },
-    releaseYearEnd: 2023,
+    releaseYearEnd: new Date(),
     setReleaseYearEnd(value) {
       this.releaseYearEnd = value
     },

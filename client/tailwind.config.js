@@ -19,6 +19,7 @@ export default {
            tertiary: '#6C7894',
            accent: '#14FFEB',
            warning: '#ff4545',
+           bar: '#A2E1E9',
          },
          dark: {
            text: '#BAE0FC',
@@ -28,6 +29,7 @@ export default {
            secondary: '#242832',
            tertiary: '#2F3136',
            accent: '#14FFEB',
+           bar: '#22646D',
         },
         // light: {
         //   text: '#0f110e',
