@@ -1,7 +1,7 @@
 
 
 <template>
-  <div class="pb-40">
+  <div class="pb-4 md:pb-40">
   <div id="tooltip" class="absolute text-sm bg-gray-200 p-2 rounded shadow-lg hidden z-50"></div>
 
     <div class="flex flex-col text-center items-center justify-center">
@@ -16,20 +16,20 @@
       </div>
     </div>
 
-    <div class="relative h-[600px] w-full max-w-4xl mx-auto pt-5">
-      <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : !statusChartIsBar}">
+    <div class="relative h-[300px] md:h-[600px] w-full mx-auto pt-5">
+      <div class="flex w-full absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : !statusChartIsBar}">
 
-        <div ref="d3StatusBarContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3StatusBarContainer" class="flex justify-center items-center w-full mx-auto md:pt-20"></div>
 
       </div>
-      <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : statusChartIsBar}">
+      <div class="flex w-full absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : statusChartIsBar}">
 
-        <div ref="d3StatusPieContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3StatusPieContainer" class="flex justify-center items-center w-full mx-auto md:pt-20"></div>
 
       </div>
     </div>
 
-    <div class="flex flex-col text-center items-center justify-center mt-44">
+    <div class="flex flex-col text-center items-center justify-center md:mt-44">
       <p class="titillium-web-black text-4xl text-light-text dark:text-dark-text">Platforms</p>
       <div class="mt-5 flex w-[100px] h-[25px] bg-light-secondary dark:bg-dark-primary rounded-md justify-center items-center text-center">
         <div @click="toggleChart('platform')" class="cursor-pointer flex justify-center items-center text-center toggle-div w-[50px] h-[25px] bg-light-accent rounded-l-md" :class="{'hidden-visibility' : !platformChartIsBar}">
@@ -41,20 +41,20 @@
       </div>
     </div>
 
-    <div class="relative h-[600px] w-full max-w-4xl mx-auto pt-5">
+    <div class="relative h-[300px] md:h-[600px] w-full max-w-4xl mx-auto pt-5">
       <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : !platformChartIsBar}">
 
-        <div ref="d3PlatformsBarContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3PlatformsBarContainer" class="flex justify-center items-center w-full mx-auto md:pt-20">></div>
 
       </div>
       <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : platformChartIsBar}">
 
-        <div ref="d3PlatformsPieContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3PlatformsPieContainer" class="flex justify-center items-center w-full mx-auto md:pt-20"></div>
 
       </div>
     </div>
 
-    <div class="flex flex-col text-center items-center justify-center mt-44">
+    <div class="flex flex-col text-center items-center justify-center md:mt-44">
       <p class="titillium-web-black text-4xl text-light-text dark:text-dark-text">Genres</p>
       <div class="mt-5 flex w-[100px] h-[25px] bg-light-secondary dark:bg-dark-primary rounded-md justify-center items-center text-center">
         <div @click="toggleChart('genre')" class="cursor-pointer flex justify-center items-center text-center toggle-div w-[50px] h-[25px] bg-light-accent rounded-l-md" :class="{'hidden-visibility' : !genreChartIsBar}">
@@ -66,15 +66,15 @@
       </div>
     </div>
 
-    <div class="relative h-[600px] w-full max-w-4xl mx-auto pt-5 pb-5">
+    <div class="relative h-[300px] md:h-[600px] w-full max-w-4xl mx-auto pt-5 pb-5">
       <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : !genreChartIsBar}">
 
-        <div ref="d3GenresBarContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3GenresBarContainer" class="flex justify-center items-center w-full mx-auto md:pt-20">></div>
 
       </div>
       <div class="absolute inset-0 top-0 left-0 right-0 bottom-0" :class="{'hidden-visibility' : genreChartIsBar}">
 
-        <div ref="d3GenresPieContainer" class="w-full max-w-4xl mx-auto pt-5"></div>
+        <div ref="d3GenresPieContainer" class="flex justify-center items-center w-full mx-auto md:pt-20"></div>
 
       </div>
     </div>
@@ -241,9 +241,9 @@ function drawBarChart(data, selector) {
 
   d3.select(selector).selectAll('*').remove();
 
-  const margin = { top: 20, right: 30, bottom: 100, left: 60 };
-  const svgWidth = 800 + margin.left + margin.right;
-  const svgHeight = 600 + margin.top + margin.bottom;
+  const margin = { top: 30, right: 30, bottom: 100, left: 60 };
+  const svgWidth = Math.min(document.documentElement.clientWidth, window.innerWidth, 1000) - margin.left - margin.right;
+  const svgHeight = Math.max(svgWidth * 0.75, 300);
   const effectiveWidth = svgWidth - margin.left - margin.right;
   const effectiveHeight = svgHeight - margin.top - margin.bottom;
 
@@ -329,8 +329,8 @@ function drawPieChart(data, selector) {
   d3.select(selector).selectAll('*').remove();
 
   const margin = { top: 20, right: 30, bottom: 50, left: 60 };
-  const svgWidth = 800 + margin.left + margin.right;
-  const svgHeight = 600 + margin.top + margin.bottom;
+  const svgWidth = Math.min(document.documentElement.clientWidth, window.innerWidth, 1000) - margin.left - margin.right;
+  const svgHeight = Math.max(svgWidth * 0.75, 300);
   const radius = Math.min(svgWidth, svgHeight) / 2 - margin.top;
 
   const color = d3.scaleOrdinal(platformThemeColors);
