@@ -7,6 +7,7 @@ import SearchView from '../views/SearchView.vue';
 import AboutView from '../views/AboutView.vue';
 import ContactView from '../views/ContactView.vue'
 import UserStatsView from '../views/UserStatsView.vue'
+import UserPageView from '../views/UserPageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +70,11 @@ const router = createRouter({
       path: '/userstats',
       name: 'userStats',
       component: UserStatsView
+    },
+    {
+      path: '/user/:uid',
+      name: 'userPage',
+      component: UserPageView
     }
   ]
 })

@@ -6,14 +6,23 @@
       <!-- Left Column for Profile Picture -->
       <div class="flex flex-col items-center w-full mt-16 md:w-1/2 md:pr-8">
         <img class="w-44 h-44 rounded-full object-cover" :src="store.userData.profile_picture ? store.userData.profile_picture : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1705911583/defaultpfp.jpg'" alt="Profile Picture"/>
-          <input class="mt-2 titillium-web-regular md:w-1/2 w-full p-1 rounded bg-light-secondary dark:bg-dark-secondary
+        <div class="w-full md:w-1/2">
+          <label class="titillium-web-bold" for="username">Profile Picture</label> <hr class="border-none"/>
+          <input class="mt-2 titillium-web-regular w-full p-1 rounded bg-light-secondary dark:bg-dark-secondary
           file:bg-light-accent dark:file:bg-dark-accent file:border file:border-none file:rounded file:opacity-60 file:text-dark-primary
           " type="file" id="profile_picture" name="profile_picture" @change="handleFileChange"/>
-        <button @click="updateProfilePicture" class="text-dark-primary mt-[1.7rem] md:w-1/2 w-full titillium-web-regular shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Profile Picture</button>
+        </div>
+          <div class="w-full md:w-1/2">
+            <label class="titillium-web-bold" for="username">Username</label> <hr class="border-none"/>
+            <input class="mt-2 titillium-web-regular w-full p-1 rounded bg-light-secondary dark:bg-dark-secondary
+            file:bg-light-accent dark:file:bg-dark-accent file:border file:border-none file:rounded file:opacity-60 file:text-dark-primary
+            " type="text" id="username" name="username" v-model="username"/>
+          </div>
+          <button @click="updateProfilePicture" class="text-dark-primary mt-[1.7rem] md:w-1/2 w-full titillium-web-regular shadow-md p-2 rounded-xl border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent" type="submit">Update Profile</button>
       </div>
 
       <!-- Right Column for Email and Password -->
-      <div class="w-full mt-5 md:w-1/2 md:pl-8">
+      <div class="w-full mt-[6.5rem] md:w-1/2 md:pl-8">
         <div class="mt-5">
           <label class="titillium-web-bold" for="email">E-Mail</label> <hr class="border-none"/>
           <input class="md:max-w-[600px] monsterrat-regular w-full p-1 rounded bg-light-secondary dark:bg-dark-secondary" type="text" id="email" name="email" v-model="email"/>
@@ -48,12 +57,6 @@
   const notificationMessage = ref('')
   const notificationColor = ref('green')
 
-const profilePictureUpdatedNotification = () => {
-  notificationColor.value = 'green'
-  notificationMessage.value = "Successfully Updated Profile Picture!"
-  notificationPopup.value.show();
-}
-
 const emailUpdateNotification = () => {
   notificationColor.value = 'green'
   notificationMessage.value = "Email Successfully Updated!"
@@ -64,6 +67,12 @@ const passwordUpdateNotification = () => {
   notificationColor.value = 'green'
   notificationMessage.value = "Password Successfully Updated!"
   notificationPopup.value.show();
+}
+
+const customUpdateNotification = (color, message) => {
+  notificationColor.value = color
+  notificationMessage.value = message
+  notificationPopup.value.show()
 }
 
 const updateErrorNotification = (error) => {
@@ -88,6 +97,7 @@ const updateErrorNotification = (error) => {
   const email = ref('')
   const password = ref('')
   const passwordConfirm = ref('')
+  const username = ref('')
   
   let selectedProfilePicture = null;
 
@@ -97,35 +107,59 @@ const handleFileChange = (event) => {
 
 const updateProfilePicture = async () => {
   try {
+    let imageUpdated = false;
+    let userNameUpdated = false;
     const url = 'https://api.cloudinary.com/v1_1/ddv5jvvvg/image/upload'; // Replace with your Cloudinary cloud name
     const uploadPreset = 'vg-collection-tracker-pfps'; // Replace with your Cloudinary upload preset
 
     const formData = new FormData();
     formData.append('file', selectedProfilePicture);
     formData.append('upload_preset', uploadPreset);
+    if (formData.length > 0) {
+        const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
+      if (!response.ok) {
+        throw new Error('Error uploading profile picture to Cloudinary');
+      }
 
-    if (!response.ok) {
-      throw new Error('Error uploading profile picture to Cloudinary');
+      const cloudinaryData = await response.json();
+      console.log('Uploaded Profile Picture URL:', cloudinaryData.url);
+
+      // Update Firebase Realtime Database with the Cloudinary URL
+      const db = getDatabase();
+      const userRef = dbRef(db, `data/users/${store.uid}`);
+      
+      await update(userRef, {
+        profile_picture: cloudinaryData.url,
+      });
+
+      imageUpdated = true;
+      console.log('Firebase Realtime Database updated successfully.');
+      }
+    
+      if (username.value.length > 0) {
+        updateUsername()
+        userNameUpdated = true
+      }
+
+    if (userNameUpdated && imageUpdated) {
+      customUpdateNotification("green", "Profile Picture and Username Updated!")
     }
 
-    const cloudinaryData = await response.json();
-    console.log('Uploaded Profile Picture URL:', cloudinaryData.url);
+    if (userNameUpdated && !imageUpdated) {
+      customUpdateNotification("green", "Username Updated!")
+    }
 
-    // Update Firebase Realtime Database with the Cloudinary URL
-    const db = getDatabase();
-    const userRef = dbRef(db, `data/users/${store.uid}`);
-    
-    await update(userRef, {
-      profile_picture: cloudinaryData.url,
-    });
+    if (!userNameUpdated && imageUpdated) {
+      customUpdateNotification("green", "Profile Picture Updated!")
+    }
 
-    console.log('Firebase Realtime Database updated successfully.');
-    profilePictureUpdatedNotification()
+    if (!userNameUpdated && !imageUpdated) {
+      customUpdateNotification("red", "No info was updated, did you include a file and/or a username?")
+    }
 
   } catch (error) {
     console.error('Error uploading profile picture to Cloudinary:', error.message);
@@ -179,5 +213,24 @@ const handlePasswordUpdate = () => {
     updateErrorNotification(error)
   })
 };
-  </script>
-  
+
+
+const updateUsername = async () => {
+  try {
+    if (username.value.length > 0) {
+    const db = getDatabase();
+    const userRef = dbRef(db, `data/users/${store.uid}`);
+    
+    await update(userRef, {
+      username: username.value,
+    });
+
+    console.log('Firebase Realtime Database updated successfully.');
+
+    }
+  } catch (error) {
+    console.error('Error uploading profile picture to Cloudinary:', error.message);
+    updateErrorNotification(error)
+  }
+};
+</script>

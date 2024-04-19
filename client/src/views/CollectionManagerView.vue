@@ -512,8 +512,8 @@ const fetchGameDetails = async (game, steamAppId) => {
       steamAppId,
       gameDetails[0].genres[0].name,
     );
-    }
     handleUpdate(gameDetails[0].id, {abbreviation: "PC", id: 6, name: "PC (Microsoft Windows)"}, store.uid )
+    }
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);
     // Handle errors, e.g., log the error or show an error message to the user

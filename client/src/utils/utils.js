@@ -66,7 +66,7 @@ export const fetchPlatforms = async (gameId, platformIds) => {
 export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseYear, gamePopularity, platformIds, uid, steamAppId = null, genre = '') => {
   const db = getDatabase();
   const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
-  
+
     if (gameStatus === undefined) {
       if (store.userData.game_collection[gameId]?.game_status) {
         gameStatus = store.userData.game_collection[gameId].game_status;
