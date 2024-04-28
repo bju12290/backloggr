@@ -59,4 +59,8 @@ export const store = reactive({
     },
     theme: 'light',
     view: 'grid',
+    username: '',
+    setUsername(value) {
+      this.username = value
+    }
 })

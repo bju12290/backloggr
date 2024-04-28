@@ -72,7 +72,7 @@ const router = createRouter({
       component: UserStatsView
     },
     {
-      path: '/user/:uid',
+      path: '/user/:username',
       name: 'userPage',
       component: UserPageView
     }

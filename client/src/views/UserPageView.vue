@@ -143,55 +143,66 @@ watch(genreCounts, (newCounts) => {
 onMounted(async () => {
   AOS.init();
   try {
-    uid.value = route.params.uid; // Retrieve UID from route parameters
-    console.log('UID:', uid.value);
+    userName.value = route.params.username; // Retrieve username from route parameters
+    console.log('Username:', userName.value);
     
-    // Ensure that the database reference is created after the UID is available
-    const userGameCollectionRef = dbRef(database, `data/users/${uid.value}/game_collection`);
-    const userNameRef = dbRef(database, `data/users/${uid.value}/username`)
-    const userProfilePictureRef = dbRef(database, `data/users/${uid.value}/profile_picture`)
-
-    get(userNameRef).then((snapshot) => {
-        if (snapshot.exists()) {
-            userName.value = snapshot.val()
-            console.log('Username:', userName.value)
-        } else {
-            console.log("No data available.")
-        }
-    }).finally(() => {
-      isUsernameLoading.value = false
-    })
-
-    get(userProfilePictureRef).then((snapshot) => {
-        if (snapshot.exists()) {
-            userProfilePicture.value = snapshot.val()
-            console.log('User PFP:', userProfilePicture.value)
-        } else {
-            console.log("No data available.")
-        }
-    }).finally(() => {
-      isUserPfpLoading.value = false
-    })
-
-    get(userGameCollectionRef).then((snapshot) => {
+    // Fetch UID based on the username
+    const usernamesRef = dbRef(database, `data/usernames`);
+    get(usernamesRef).then((snapshot) => {
       if (snapshot.exists()) {
-        gameCollection.value = snapshot.val();
-        console.log('Game Collection:', gameCollection.value);
+        snapshot.forEach((childSnapshot) => {
+          if (childSnapshot.val() === userName.value) {
+            uid.value = childSnapshot.key;
+            console.log('UID:', uid.value);
+
+            // Fetch user data after retrieving UID
+            fetchUserData(uid.value);
+          }
+        });
       } else {
-        console.log("No data available");
+        console.log("Username does not exist.");
       }
-    }).then(() => {
-        fetchImages(gameCollection.value)
-        drawPieChart(statusCounts, d3StatusPieContainer.value)
-    }).finally(() => {
-      isCollectionLoading.value = false
     }).catch((error) => {
-      console.error('Error reading game collection:', error);
+      console.error('Error fetching UID by username:', error);
     });
   } catch (error) {
-    console.error('Failed to fetch User Info:', error);
+    console.error('Failed to initialize user page:', error);
   }
-})
+});
+
+function fetchUserData(uid) {
+  const userGameCollectionRef = dbRef(database, `data/users/${uid}/game_collection`);
+  const userProfilePictureRef = dbRef(database, `data/users/${uid}/profile_picture`);
+
+  // Username already loaded, no need to fetch again
+  isUsernameLoading.value = false;
+
+  get(userProfilePictureRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      userProfilePicture.value = snapshot.val();
+      console.log('User PFP:', userProfilePicture.value);
+    } else {
+      console.log("Profile picture not available.");
+    }
+  }).finally(() => {
+    isUserPfpLoading.value = false
+  });
+
+  get(userGameCollectionRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      gameCollection.value = snapshot.val();
+      console.log('Game Collection:', gameCollection.value);
+      fetchImages(gameCollection.value); // Assuming this function exists
+      drawPieChart(statusCounts, d3StatusPieContainer.value); // Assuming this function exists
+    } else {
+      console.log("Game collection not available.");
+    }
+  }).finally(() => {
+    isCollectionLoading.value = false
+  }).catch((error) => {
+    console.error('Error reading game collection:', error);
+  });
+}
 
 const fetchImages = async (gameCollection) => {
     for (const game in gameCollection) {

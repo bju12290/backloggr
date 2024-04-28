@@ -27,11 +27,25 @@ auth.onAuthStateChanged((user) => {
                 }).catch((error) => {
                 console.error(error);
                 });
+
+            get(child(dbRef, `data/usernames/${uid}`)).then((snapshot) => {
+              if (snapshot.exists()) {
+                const username = snapshot.val();  // Get the username value
+                store.setUsername(username);  // Store the username in the store
+              } else {
+                console.log("No username available");
+              }
+            }).catch((error) => {
+              console.error("Error fetching username:", error);
+            });
+
+
   } else {
     // No user is signed in.
     store.setSignedIn(false)
     store.userData = {}
     store.setUid('')
+    store.setUsername('');
   }
 });
 

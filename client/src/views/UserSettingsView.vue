@@ -49,7 +49,7 @@
   import { ref } from 'vue';
   import {Cloudinary} from "@cloudinary/url-gen";
   import {store} from '../store'
-  import { getDatabase, ref as dbRef, update } from 'firebase/database';
+  import { getDatabase, ref as dbRef, update, get, set } from 'firebase/database';
   import { getAuth, verifyBeforeUpdateEmail, updatePassword  } from "firebase/auth";
   import NotificationPopup from '@/components/NotificationPopup.vue';
 
@@ -141,7 +141,7 @@ const updateProfilePicture = async () => {
       }
     
       if (username.value.length > 0) {
-        updateUsername()
+        updateUsername(store.uid, username.value)
         userNameUpdated = true
       }
 
@@ -215,22 +215,36 @@ const handlePasswordUpdate = () => {
 };
 
 
-const updateUsername = async () => {
+const updateUsername = async (uid, newUsername) => {
   try {
-    if (username.value.length > 0) {
-    const db = getDatabase();
-    const userRef = dbRef(db, `data/users/${store.uid}`);
-    
-    await update(userRef, {
-      username: username.value,
-    });
+    if (newUsername.length > 0) {
+      const db = getDatabase();
+      const usernameRef = dbRef(db, `data/usernames/${uid}`);
 
-    console.log('Firebase Realtime Database updated successfully.');
+      // Get all usernames to check for uniqueness
+      const allUsernamesRef = dbRef(db, 'data/usernames');
+      const allUsernamesSnap = await get(allUsernamesRef);
+      let isUsernameTaken = false;
+      
+      allUsernamesSnap.forEach((childSnapshot) => {
+        if (childSnapshot.val() === newUsername && childSnapshot.key !== uid) {
+          isUsernameTaken = true;
+        }
+      });
 
+      if (isUsernameTaken) {
+        console.log('Username is already taken.');
+        customUpdateNotification("red", "Username is taken!")
+        return;
+      }
+
+      // Set the new username for the user
+      await set(usernameRef, newUsername);
+      console.log('Firebase Realtime Database updated successfully with new username.');
     }
   } catch (error) {
-    console.error('Error uploading profile picture to Cloudinary:', error.message);
-    updateErrorNotification(error)
+    console.error('Error updating username:', error.message);
+    updateErrorNotification(error);
   }
 };
 </script>
