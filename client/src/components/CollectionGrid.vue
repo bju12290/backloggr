@@ -74,7 +74,7 @@
                   <clip-loader color="#14FFEB" size="90px"></clip-loader>
                 </div>
             </router-link>
-          </div>
+            </div>
           <div class="p-2">
             <h3 class="text-xl line-clamp-1 titillium-web-bold">{{ store.userData.game_collection[game.id]?.game_name || 'Loading...' }}</h3>
             <p class="line-clamp-1 titillium-web-semibold">First Release</p>

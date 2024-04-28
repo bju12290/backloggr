@@ -202,7 +202,7 @@ const setupRealtimeListeners = () => {
 </div>
 </template>
 
-<style>
+<style scoped>
 :root {
   --pagination-bullet-active-light: #97bad3; /* Light mode color */
   --pagination-bullet-active-dark: #2c4f68; /* Dark mode color */

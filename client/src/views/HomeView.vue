@@ -82,7 +82,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 
 .swiper-slide {
   display: flex;
