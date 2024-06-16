@@ -7,6 +7,8 @@ const { defineString } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 import {onRequest} from "firebase-functions/v2/https";
 import * as functions from 'firebase-functions';
+const hltb = require('howlongtobeat');
+const hltbService = new hltb.HowLongToBeatService();
 
 const serviceAccount = require(path.join(__dirname, 'adminSDKKey.json'))
 
@@ -30,6 +32,29 @@ export const helloWorld = onRequest(
       res.send(`${twitchClientId.value()}! ${twitchClientSecret.value()}.`);
     }
   );
+
+  export const searchHltb = functions.https.onRequest(async (req, res) => {
+    try {
+        // Handle CORS and async operations inside try block
+        await cors(req, res, async () => {
+            const searchTerm = req.query.searchTerm as string;
+            if (!searchTerm) {
+                res.status(400).send("Search term is required.");
+                return;
+            }
+
+            const result = await hltbService.search(searchTerm);
+            res.status(200).send(result);
+        });
+    } catch (error) {
+        // Error handling outside the cors call
+        if (error instanceof Error) {
+            res.status(500).send(`Error fetching data: ${error.message}`);
+        } else {
+            res.status(500).send('Error fetching data: An unknown error occurred.');
+        }
+    }
+});
 
 export const getTwitchAccessToken = functions.https.onRequest(async (request, response) => {
      try {
@@ -155,7 +180,7 @@ export const getGameData = functions.https.onRequest(async (request, response) =
       const searchLimit = request.query.limit
       console.log("searchLimit:", searchLimit)
 
-      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, total_rating, status, category, summary, aggregated_rating, dlcs.*, expansions.*, franchise.*, game_engines.name, genres.name, player_perspectives.name, screenshots.image_id, similar_games.id, storyline, themes.name, url, videos.*, websites.*; limit ${searchLimit}; where id = ${id};`;
+      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, rating, rating_count, total_rating, total_rating_count, aggregated_rating, aggregated_rating_count, hypes, status, category, summary, dlcs.*, expansions.*, franchise.*, game_engines.name, genres.name, player_perspectives.name, screenshots.image_id, similar_games.id, storyline, themes.name, url, videos.*, websites.*; limit ${searchLimit}; where id = ${id};`;
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
 

@@ -8,6 +8,7 @@ import AboutView from '../views/AboutView.vue';
 import ContactView from '../views/ContactView.vue'
 import UserStatsView from '../views/UserStatsView.vue'
 import UserPageView from '../views/UserPageView.vue'
+import GenieView from '../views/GenieView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -75,6 +76,11 @@ const router = createRouter({
       path: '/user/:username',
       name: 'userPage',
       component: UserPageView
+    },
+    {
+      path: '/recommender',
+      name: 'recommenderPage',
+      component: GenieView
     }
   ]
 })

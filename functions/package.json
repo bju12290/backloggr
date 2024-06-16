@@ -17,12 +17,13 @@
     "axios": "^1.6.0",
     "cors": "^2.8.5",
     "express-rate-limit": "^7.1.5",
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1",
+    "firebase-admin": "^12.1.1",
+    "firebase-functions": "^5.0.1",
+    "howlongtobeat": "github:bju12290/howlongtobeat#master",
     "steamgriddb": "^2.1.1"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.1.0",
+    "firebase-functions-test": "^3.3.0",
     "typescript": "^5.2.2"
   },
   "private": true

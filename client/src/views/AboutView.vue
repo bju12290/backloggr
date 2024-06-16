@@ -182,15 +182,6 @@
 <path d="M71.81 73.6117L73.7837 82.5613" stroke="#14FFEB"/>
                 </svg>
             </div>
-        </div>
-        <h2 class="md:text-left text-center text-light-text dark:text-dark-text pt-24 md:pl-16 titillium-web-black text-4xl md:text-7xl">My Story</h2>
-        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">
-            As a gamer with a seemingly endless backlog of games I want to play, I needed a way to efficiently manage my collection and get recommendations as to what I should play next. I have a very difficult time choosing what to play, and in an ideal world, someone would pick for me. But it never really works if I just have a friend pick a game. A solution I propose is that, using statistics, an "expert video-game-picking AI" that knows your interests either makes the decision for you, or narrows down the options to make the choice easier. With this in mind, I set out to create a web application to tackle this issue for me (and hopefully others).
-        </p>
-        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">The site you're on now is currently in its infancy, and I hope to add many more features in the coming future (some of which you can see below). As is, you can add games to your collection and organize them based on the "status" they hold in your collection (Playing, Completed, Dropped, Backlog, Never Played). You can also select what platform you own the game/intend to play it on. These two features give you the ability to somewhat narrow down what you might want to play, however I feel using statistics from various APIs, we can make suggestions more tailored to the user, or at the very least make suggestions with some level of logic to them greater than pure randomization.</p>
-        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">If you find any bugs, if things aren't working as you think they should, or if you have a suggestion, please reach out via the Contact Form on the Contact Page!</p>
-        <h3 class="text-light-text dark:text-dark-text pt-24 titillium-web-black text-3xl md:text-6xl text-center">Planned Features</h3>
-        <div class="p-3 text-xl pt-16 titillium-web-semibold flex flex-wrap gap-4 text-center justify-center items-center text-light-text dark:text-dark-text">
             <div class="hover:scale-105 transition-all duration-500 flex flex-col justify-center items-center p-6 rounded-lg bg-light-secondary dark:bg-dark-secondary aspect-square w-1/4 min-w-[250px]">
                 <p>Game Recommendations Based on Statistics</p>
                 <svg width="300" height="250" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,6 +200,15 @@
                     <path d="M52.5 61.5L55.4885 49.973C55.697 49.1686 54.8904 48.4756 54.1266 48.8029L52.5 49.5L51.238 46.6604C50.9179 45.9402 49.9293 45.8561 49.4921 46.5119L47.5 49.5L45.8734 48.8029C45.1096 48.4756 44.303 49.1686 44.5115 49.973L47.5 61.5" stroke="#14FFEB" stroke-width="2"/>
                 </svg>
             </div>
+        </div>
+        <h2 class="md:text-left text-center text-light-text dark:text-dark-text pt-24 md:pl-16 titillium-web-black text-4xl md:text-7xl">My Story</h2>
+        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">
+            As a gamer with a seemingly endless backlog of games I want to play, I needed a way to efficiently manage my collection and get recommendations as to what I should play next. I have a very difficult time choosing what to play, and in an ideal world, someone would pick for me. But it never really works if I just have a friend pick a game. A solution I propose is that, using statistics, an "expert video-game-picking AI" that knows your interests either makes the decision for you, or narrows down the options to make the choice easier. With this in mind, I set out to create a web application to tackle this issue for me (and hopefully others).
+        </p>
+        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">The site you're on now is currently in its infancy, and I hope to add many more features in the coming future (some of which you can see below). As is, you can add games to your collection and organize them based on the "status" they hold in your collection (Playing, Completed, Dropped, Backlog, Never Played). You can also select what platform you own the game/intend to play it on. These two features give you the ability to somewhat narrow down what you might want to play, however I feel using statistics from various APIs, we can make suggestions more tailored to the user, or at the very least make suggestions with some level of logic to them greater than pure randomization.</p>
+        <p class="p-2 text-center md:text-left md:pr-8 md:pl-20 pt-6 text-light-text dark:text-dark-text titillium-web-semibold text-2xl">If you find any bugs, if things aren't working as you think they should, or if you have a suggestion, please reach out via the Contact Form on the Contact Page!</p>
+        <h3 class="text-light-text dark:text-dark-text pt-24 titillium-web-black text-3xl md:text-6xl text-center">Planned Features</h3>
+        <div class="p-3 text-xl pt-16 titillium-web-semibold flex flex-wrap gap-4 text-center justify-center items-center text-light-text dark:text-dark-text">
             <div class="hover:scale-105 transition-all duration-500 flex flex-col justify-center items-center p-6 rounded-lg bg-light-secondary dark:bg-dark-secondary aspect-square w-1/4 min-w-[250px]">
                 <p>Import Game Collection From CSV/Excel Spreadsheet</p>
                 <svg width="300" height="250" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
