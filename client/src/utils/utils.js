@@ -67,78 +67,68 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
   const db = getDatabase();
   const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
 
-    if (gameStatus === undefined) {
-      if (store.userData.game_collection[gameId]?.game_status) {
-        gameStatus = store.userData.game_collection[gameId].game_status;
-      } else {
-        gameStatus = "playing";
-      }
-    }
+  console.log(`Adding game to collection: ${gameId}, ${gameName}, UID: ${uid}`);
 
-    if (gamePopularity === undefined) {
-      gamePopularity = 0
-    }
-  
-    if (!gameReleaseYear) {
-      //console.log('No Release Year')
-      gameReleaseYear = 0
-    }
-  
-    if (!platformIds) {
-      platformIds = []
-    }
-    //console.log(uid);
-
-    let formattedReleaseYear;
-    if (gameReleaseYear > new Date().getFullYear()) {
-      formattedReleaseYear = new Date(gameReleaseYear * 1000).getFullYear();
+  if (gameStatus === undefined) {
+    if (store.userData?.game_collection?.[gameId]?.game_status) {
+      gameStatus = store.userData.game_collection[gameId].game_status;
     } else {
-      formattedReleaseYear = gameReleaseYear
+      gameStatus = "playing";
     }
-  
-    // Check if the document already exists
-    get(gameRef)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          // Document exists, it's an update
-          // You can add specific logic for updates if needed
-          // showUpdatePopup.value = true;
-          // showSuccessPopup.value = false;
-          // showErrorPopup.value = false;
-        } else {
-          // Document doesn't exist, it's an initial addition
-          // showSuccessPopup.value = true;
-          // showErrorPopup.value = false;
-          // showUpdatePopup.value = false;
-        }
-      })
-      .catch((error) => {
-        console.error('Error checking if document exists:', error);
-        // showErrorPopup.value = true;
-        // showSuccessPopup.value = false;
-        // showUpdatePopup.value = false;
-      })
-      .finally(() => {
-        // Optionally, use a timeout to hide the popups after a certain duration
-        setTimeout(() => {
-          // showSuccessPopup.value = false;
-          // showErrorPopup.value = false;
-          // showUpdatePopup.value = false;
-        }, 3000); // Adjust the duration as needed
-      });
-  
-    // Perform the set operation
-    update(gameRef, {
-      steamAppId: steamAppId,
-      game_name: gameName,
-      game_status: gameStatus,
-      platformIds: platformIds,
-      release_year: formattedReleaseYear,
-      popularity: gamePopularity,
-      genre: genre,
-      selected: false
-    });
   }
+
+  if (gamePopularity === undefined) {
+    gamePopularity = 0;
+  }
+
+  if (!gameReleaseYear) {
+    gameReleaseYear = 0;
+  }
+
+  if (!platformIds) {
+    platformIds = [];
+  }
+
+  let formattedReleaseYear;
+  if (gameReleaseYear > new Date().getFullYear()) {
+    formattedReleaseYear = new Date(gameReleaseYear * 1000).getFullYear();
+  } else {
+    formattedReleaseYear = gameReleaseYear;
+  }
+
+  get(gameRef)
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(`Game ${gameId} already exists in collection.`);
+      } else {
+        console.log(`Game ${gameId} does not exist in collection. Adding new entry.`);
+      }
+    })
+    .catch((error) => {
+      console.error('Error checking if document exists:', error);
+    })
+    .finally(() => {
+      setTimeout(() => {}, 3000);
+    });
+
+  update(gameRef, {
+    steamAppId: steamAppId,
+    game_name: gameName,
+    game_status: gameStatus,
+    platformIds: platformIds,
+    release_year: formattedReleaseYear,
+    popularity: gamePopularity,
+    genre: genre,
+    selected: false
+  })
+  .then(() => {
+    console.log(`Game ${gameId} added/updated successfully.`);
+  })
+  .catch((error) => {
+    console.error(`Error adding/updating game ${gameId}: ${error.message}`);
+  });
+};
+
 
   export const handleRemove = (gameId, uid) => {
     const db = getDatabase();
@@ -156,13 +146,15 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
   export const handleUpdate = (gameId, value, uid) => {
     const db = getDatabase();
     const gameRef = dbRef(db, `data/users/${uid}/game_collection/${gameId}`);
-    //console.log(value)
+  
+    console.log(`Updating game ${gameId} with value:`, value, `UID: ${uid}`);
+  
     if (value === "playing" || value === "completed" || value === "backlog" || value === "dropped" || value === "never-played") {
       update(gameRef, {
         game_status: value,
       })
       .then(() => {
-        //console.log(`Game status for game with ID ${gameId} updated successfully.`);
+        console.log(`Game status for game with ID ${gameId} updated successfully.`);
       })
       .catch((error) => {
         console.error(`Error updating game status for game with ID ${gameId}: ${error.message}`);
@@ -170,15 +162,15 @@ export const handleAddToCollection = (gameId, gameName, gameStatus, gameReleaseY
     } else {
       update(gameRef, {
         platform: value,
-    })
-    .then(() => {
-      //console.log(`Platform for game with ID ${gameId} updated successfully.`);
+      })
+      .then(() => {
+        console.log(`Platform for game with ID ${gameId} updated successfully.`);
       })
       .catch((error) => {
-      console.error(`Error updating platform for game with ID ${gameId}: ${error.message}`);
+        console.error(`Error updating platform for game with ID ${gameId}: ${error.message}`);
       });
     }
-  }
+  };
   
   export const searchGames = async (queryValue, searchLimit) => {
     try {

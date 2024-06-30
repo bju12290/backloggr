@@ -68,8 +68,8 @@
             <input class="absolute top-0 right-0 m-2 opacity-0 w-0 h-0" type="checkbox" :id="'game-checkbox-' + game.id" :value="game.id" v-model="selectedGames" @change="toggleSelection()">
             <label :for="'game-checkbox-' + game.id" class="absolute top-0 right-0 m-2 w-6 h-6 border-2 border-light-primary dark:border-dark-primary rounded-full cursor-pointer" :class="{ 'bg-light-accent': selectedGames.includes(game.id) }"></label>
             <div class="min-h-[160px] max-h-[160px] min-w-[106.66px] max-w-[106.66px]">
-            <router-link :to="'/game/' + game.id">
-                <img v-if="gameData[game.id]?.imageLoaded" :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="rounded hover:scale-105 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
+            <router-link class="block w-full h-full" :to="'/game/' + game.id">
+                <img v-if="gameData[game.id]?.imageLoaded" :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1719104953/no_cover_img_t5agly_c_crop_w_821_tlxlxx.jpg'" alt="Game Cover" class="w-full h-full rounded hover:scale-105 transition-all duration-500 cursor-pointer object-fill" />
                 <div v-else class="flex justify-center content-center">
                   <clip-loader color="#14FFEB" size="90px"></clip-loader>
                 </div>
@@ -190,8 +190,8 @@
             <input class="absolute top-0 right-0 m-2 opacity-0 w-0 h-0" type="checkbox" :id="'game-checkbox-' + game.id" :value="game.id" v-model="selectedGames" @change="toggleSelection()">
             <label :for="'game-checkbox-' + game.id" class="absolute top-0 right-0 m-2 w-6 h-6 border-2 border-light-primary dark:border-dark-primary rounded-full cursor-pointer" :class="{ 'bg-light-accent': selectedGames.includes(game.id) }"></label>
             <div class="min-h-[160px] max-h-[160px] min-w-[106.66px] max-w-[106.66px]">
-            <router-link :to="'/game/' + game.id">
-                <img v-if="gameData[game.id]?.imageLoaded" :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'" alt="Game Cover" class="rounded hover:scale-105 transition-all duration-500 cursor-pointer max-w-none min-h-40 max-h-40" />
+            <router-link class="block w-full h-full" :to="'/game/' + game.id">
+                <img v-if="gameData[game.id]?.imageLoaded" :src="gameData[game.id]?.image || 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1719104953/no_cover_img_t5agly_c_crop_w_821_tlxlxx.jpg'" alt="Game Cover" class="w-full h-full rounded hover:scale-105 transition-all duration-500 cursor-pointer object-fill" />
                 <div v-else class="flex justify-center content-center">
                   <clip-loader color="#14FFEB" size="90px"></clip-loader>
                 </div>
@@ -500,7 +500,7 @@ const fetchGameImage = async (gameId, gameName) => {
       // Update the gameData structure
       gameData.value[gameId] = {
         ...store.userData.game_collection[gameId], // Spread existing properties
-        image: artTypeData.data[0]?.url || "https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg",
+        image: artTypeData.data[0]?.url || "https://res.cloudinary.com/ddv5jvvvg/image/upload/v1719104953/no_cover_img_t5agly_c_crop_w_821_tlxlxx.jpg",
         imageLoaded: true
       };
       //console.log(gameData.value[gameId])

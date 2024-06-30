@@ -144,9 +144,9 @@ onMounted(async () => {
   AOS.init();
   try {
     userName.value = route.params.username; // Retrieve username from route parameters
-    console.log('Username:', userName.value);
-    
-    // Fetch UID based on the username
+    console.log('Username/UID:', userName.value);
+    if (userName.value.length < 28) {
+      // Fetch UID based on the username
     const usernamesRef = dbRef(database, `data/usernames`);
     get(usernamesRef).then((snapshot) => {
       if (snapshot.exists()) {
@@ -165,6 +165,10 @@ onMounted(async () => {
     }).catch((error) => {
       console.error('Error fetching UID by username:', error);
     });
+    } else {
+      uid.value = userName.value
+      fetchUserData(uid.value);
+    }
   } catch (error) {
     console.error('Failed to initialize user page:', error);
   }
@@ -304,8 +308,8 @@ function drawPieChart(data, selector) {
         </div>
         <div v-else class="p-5 bg-light-primary dark:bg-dark-primary rounded-md flex flex-col xl:flex-row justify-evenly md:justify-between lg:min-h-[388px] md:min-h-[727px] min-h-[1407.5px]">
             <div class="flex flex-col md:items-left items-center text-center">
-                <img class="rounded-full max-w-[300px]" :src="userProfilePicture"/>
-                <p class="text-light-text dark:text-dark-text titillium-web-black text-5xl">{{ userName}}</p>
+                <img class="rounded-full max-w-[300px]" :src="userProfilePicture ? userProfilePicture : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1705911583/defaultpfp.jpg'"/>
+                <p class="text-light-text dark:text-dark-text titillium-web-black text-5xl">{{ userName.length < 28 ? userName : ""}}</p>
             </div>
             <div class="w-full pt-16 md:pt-0 flex flex-col md:flex-row text-center text-light-text dark:text-dark-text titillium-web-bold justify-evenly gap-3">
                 <div class="gap-5 flex flex-col text-5xl justify-center">
@@ -336,7 +340,7 @@ function drawPieChart(data, selector) {
                       crossFade: true
                     }"
                     :modules="modules"
-                    class=""
+                    class="h-[345px]"
                   >
                     <SwiperSlide class="">
                         <p class="text-center text-light-text dark:text-dark-text titillium-web-bold text-2xl">Status</p>

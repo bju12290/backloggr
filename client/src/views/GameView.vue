@@ -102,17 +102,17 @@ const setupRealtimeListeners = () => {
         <div class="flex flex-wrap gap-2">
           <p class="shadow-md text-light-text dark:text-dark-text text-sm titillium-web-semibold p-2 bg-light-primary dark:bg-dark-primary rounded-md" v-for="genre in gameDetails.genres">{{ genre.name }}</p>
         </div>
-        <p class="titillium-web-medium mt-2">Themes</p>
+        <p class="titillium-web-semibold mt-2">Themes</p>
         <div class="flex gap-2" >
           <p class="shadow-md text-light-text dark:text-dark-text text-sm titillium-web-semibold p-2 bg-light-primary dark:bg-dark-primary rounded-md" v-for="theme in gameDetails.themes">{{ theme.name }}</p>
         </div>
-        <p class="titillium-web-medium mt-2">Platforms</p>
+        <p class="titillium-web-semibold mt-2">Platforms</p>
         <div class="flex flex-wrap gap-2">
         <div class="shadow-md p-1 bg-light-primary dark:bg-dark-primary rounded-md" v-for="platform in gameDetails.platforms">
           <p class="text-light-text dark:text-dark-text text-sm titillium-web-semibold text-center p-1">{{ platform.abbreviation?.length > 0? platform.abbreviation : platform.name }}</p>
         </div>
       </div>
-      <p class="titillium-web-medium mt-2">Summary</p>
+      <p class="titillium-web-semibold mt-2">Summary</p>
       <p>{{ gameDetails.summary }}</p>
       <div v-if="store.signedIn">
     <div class="flex flex-col justify-center items-center gap-2" v-if="gameDetails.id && store.userData.game_collection[gameDetails.id]">
@@ -158,7 +158,7 @@ const setupRealtimeListeners = () => {
             
       <form @change="handleUpdate(gameDetails.id, store.userData.game_collection[gameDetails.id].platform, store.uid)">
         <label class="titillium-web-medium" for="platform">Playing On: </label>
-          <select class="titillium-web-regular w-48 p-1 rounded bg-light-secondary dark:bg-dark-secondary" id="platform" name="platform" v-model="store.userData.game_collection[gameDetails.id].platform">
+          <select class="titillium-web-regular w-32 p-1 rounded-md bg-light-tertiary dark:bg-dark-tertiary" id="platform" name="platform" v-model="store.userData.game_collection[gameDetails.id].platform">
             <option disabled value="">
               {{ 
                 Object.keys(gameDetails.platforms).length > 0
@@ -174,7 +174,7 @@ const setupRealtimeListeners = () => {
       <button class="text-dark-primary shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline titillium-web-semibold mt-5 p-2 bg-light-accent dark:bg-dark-accent" @click="handleRemove(gameDetails.id, store.uid)">Remove from Collection</button>
     </div>
     <div class="flex flex-col justify-center items-center gap-2" v-else>
-      <button class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer titillium-web-light mt-5 p-2 bg-light-primary dark:bg-dark-accent" @click="handleAddToCollection(gameDetails.id, gameDetails.name, undefined, gameDetails.first_release_date, gameDetails.total_rating, gameDetails.platforms, store.uid )">Add to Collection</button>
+      <button class="shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500 cursor-pointer titillium-web-semibold mt-5 p-2 bg-light-primary dark:bg-dark-accent text-dark-text dark:text-light-text" @click="handleAddToCollection(gameDetails.id, gameDetails.name, undefined, gameDetails.first_release_date, gameDetails.total_rating, gameDetails.platforms, store.uid )">Add to Collection</button>
     </div>
   </div>
   </div>

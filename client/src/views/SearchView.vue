@@ -126,7 +126,7 @@ const handleSearch = async () => {
                     <p class="titillium-web-light line-clamp-1">{{ result.total_rating ? result.total_rating?.toFixed(2) : "Review Score Not Found"}}</p>
                     <p class="titillium-web-semibold">Platforms</p>
                     <div class="flex flex-wrap gap-2">
-                        <div class="w-[145px] shadow-md titillium-web-semibold p-1 bg-light-accent dark:bg-dark-accent rounded text-dark-primary" v-for="platform in result.platforms">
+                        <div class="shadow-md p-1 bg-light-primary dark:bg-dark-primary rounded-md" v-for="platform in result.platforms">
                             <p class="text-xs text-center p-1">{{ platform?.abbreviation?.length > 0? platform.abbreviation : platform.name }}</p>
                         </div>
                     </div>

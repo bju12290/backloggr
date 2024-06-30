@@ -95,7 +95,7 @@
             <ComboboxButton
               class="absolute inset-y-0 right-0 flex items-center pr-2"
             >
-              <ChevronUpDownIcon
+              <ChevronDoubleDownIcon
                 class="h-5 w-5 text-gray-400"
                 aria-hidden="true"
               />
@@ -182,8 +182,8 @@
                               </div>
                           </div>
                         </div>
-                          <div>
-                            <router-link :to="'/game/' + game.id"><img class="rounded-md max-h-80 place-self-auto" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
+                          <div class="p-5">
+                            <router-link class="block w-full h-full" :to="'/game/' + game.id"><img class="rounded-md w-full h-full hover:scale-105 transition-all duration-500 cursor-pointer object-contain" :src="game?.artType?.data?.length > 0 ? game?.artType.data[0].url : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/></router-link>
                           </div>
                         </div>
                         </span>
@@ -200,9 +200,11 @@
     <div v-if="store.signedIn">
     <div class="flex md:flex-row flex-col titillium-web-regular">
       <div class="mt-24 w-1/2 w-full md:max-w-[300px]">
-        <div class="flex flex-col justify-center items-center m-3">
-          <label for="profileUrl" hidden>Steam Profile URL:</label>
-          <input class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast text-light-primary dark:text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
+      <div class="sticky top-8 pt-20">
+        <SortSearchFilter />
+        <div class="flex flex-col justify-center items-center m-3 mt-10">
+          <label for="profileUrl" class="titillium-web-bold text-lg text-light-text dark:text-dark-text w-full text-left">Import Steam Library</label>
+          <input @keyup.enter="importGames()" class="w-full placeholder:text-light-primary placeholder:dark:text-dark-textcontrast text-light-primary dark:text-dark-textcontrast rounded-md p-1 bg-light-tertiary dark:bg-dark-secondary m-2 block" id="profileUrl" placeholder="Enter Your Steam Profile Url..."/> <br>
           <button @click="importGames()" class="w-[162px] titillium-web-bold shadow-md p-2 rounded border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent">Import Library</button>
         </div>
         <div v-if="isImporting" class="w-98% m-2 block">
@@ -216,8 +218,6 @@
             <div id="progress" class="progress bg-dark-accent text-center titillium-web-semibold" style="width: 100%">Importing Complete</div>
           </div>
         </div>
-      <div class="sticky top-8 pt-20">
-        <SortSearchFilter />
       </div>
       </div>
       <CollectionGrid :selectedStatus="selectedStatus" :view="store.view"/>
@@ -266,7 +266,7 @@
     ComboboxOptions,
     TransitionRoot,
   } from '@headlessui/vue'
-  import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+  import { ChevronDoubleDownIcon } from '@heroicons/vue/solid'
   import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
   import { getDatabase, ref as dbRef, set, get } from "firebase/database";
   import { store } from '../store'
@@ -485,7 +485,6 @@ const importGames = async () => {
 // Function to fetch additional details for a single game
 const fetchGameDetails = async (game, steamAppId) => {
   try {
-    // Modify the URL and parameters based on your endpoint
     const response = await fetch(`https://us-central1-video-game-collection-tracker.cloudfunctions.net/getGameData?query=${game.name}`, {
       method: 'GET',
     });
@@ -494,30 +493,54 @@ const fetchGameDetails = async (game, steamAppId) => {
       throw new Error(`Failed to fetch details for ${game.name}`);
     }
 
-    const gameDetails = await response.json();
-    console.log(`Details for ${game.name}:`, gameDetails);
-    const releaseDate = new Date(gameDetails[0].first_release_date * 1000); // Convert to milliseconds
+    const rawResponse = await response.text();
+    console.log(`Raw response for ${game.name}:`, rawResponse);
+
+    const gameDetails = JSON.parse(rawResponse);
+    console.log(`Parsed response for ${game.name}:`, gameDetails);
+
+    if (!gameDetails || !Array.isArray(gameDetails) || gameDetails.length === 0) {
+      throw new Error(`Invalid response structure for ${game.name}`);
+    }
+
+    const gameDetail = gameDetails[0];
+    console.log(`Game detail object:`, gameDetail);
+
+    if (!gameDetail) {
+      throw new Error(`Game detail is undefined for ${game.name}`);
+    }
+
+    console.log(`Game detail ID: ${gameDetail.id}`);
+    console.log(`Game detail name: ${gameDetail.name}`);
+    console.log(`Game detail release date: ${gameDetail.first_release_date}`);
+    console.log(`Game detail rating: ${gameDetail.total_rating}`);
+    console.log(`Game detail platforms: ${JSON.stringify(gameDetail.platforms)}`);
+    console.log(`Game detail genres: ${JSON.stringify(gameDetail.genres)}`);
+
+    const releaseDate = new Date((gameDetail.first_release_date || 0) * 1000); 
     const currentDate = new Date();
+
     if (releaseDate > currentDate) {
-      console.log('Release Date for this game is in the future, skipping.')
+      console.log('Release Date for this game is in the future, skipping.');
     } else {
+      console.log(`Store UID: ${store?.uid}`);
       handleAddToCollection(
-      gameDetails[0].id,
-      gameDetails[0].name,
-      undefined,
-      gameDetails[0].first_release_date,
-      gameDetails[0].total_rating,
-      gameDetails[0].platforms,
-      store.uid,
-      steamAppId,
-      gameDetails[0].genres[0].name,
-    );
-    handleUpdate(gameDetails[0].id, {abbreviation: "PC", id: 6, name: "PC (Microsoft Windows)"}, store.uid )
+        gameDetail.id || '',
+        gameDetail.name || '',
+        undefined,
+        gameDetail.first_release_date || undefined,
+        gameDetail.total_rating || 0,
+        gameDetail.platforms || [],
+        store?.uid || '',
+        steamAppId,
+        gameDetail.genres?.[0]?.name || ''
+      );
+      handleUpdate(gameDetail.id || '', { abbreviation: "PC", id: 6, name: "PC (Microsoft Windows)" }, store?.uid || '');
     }
   } catch (error) {
     console.error(`Error fetching details for ${game.name}:`, error.message);
-    // Handle errors, e.g., log the error or show an error message to the user
   }
 };
+
 
   </script>

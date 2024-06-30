@@ -17,7 +17,7 @@
                 <option>Question</option>
                 <option>Other</option>
             </select>
-
+            
             <label class="titillium-web-bold text-lg" for="message">Message: </label>
 
             <textarea v-model="contact.message" class="resize-none p-1 w-full rounded bg-light-tertiary dark:bg-dark-secondary" name="message" id="message" rows="10" cols="30"></textarea>

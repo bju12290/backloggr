@@ -1,24 +1,35 @@
 <template>
-    <div class="p-4 text-light-text dark:text-dark-text titillium-web-regular">
-      <form @submit.prevent="selectGame" class="space-y-4">
+    <div v-if="store.signedIn" class="p-4 text-light-text dark:text-dark-text titillium-web-regular">
+      <div v-if="!isCollectionLoaded" class="flex flex-col justify-center text-center">
+        <p class="block text-2xl titillium-web-semibold mt-5 bouncing-text">
+          <span v-for="(char, index) in scanningText" :key="index" :class="{ 'bouncing': activeIndex === index }">{{ char === ' ' ? '\u00A0' : char }}</span>
+        </p>
+        <div class="w-full mt-4 px-4 flex flex-col justify-center items-center">
+          <div class="progress-bar dark:bg-dark-primary bg-light-secondary w-[60%] h-4 rounded">
+            <div class="progress bg-dark-accent h-4 rounded" :style="{ width: progressWidth }"></div>
+          </div>
+          <p class="titillium-web-light text-center dark:text-dark-text mt-2">Please remain on this page while the process is in progress, first scans might take longer!</p>
+        </div>
+      </div>
+      <form v-else @submit.prevent="selectGame" class="space-y-4">
         <div>
-          <label for="platform" class="block text-sm font-medium text-gray-700">Platform</label>
+          <label for="platform" class="block text-sm titillium-web-semibold">Platform</label>
           <select id="platform" v-model="preferences.platform" class="text-dark-primary mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            <option disabled value="">Select a platform</option>
+            <option value="">Select a platform</option>
             <option v-for="platform in uniquePlatforms" :key="platform">{{ platform }}</option>
           </select>
         </div>
         <div>
-          <label for="genre" class="block text-sm font-medium text-gray-700">Genre</label>
+          <label for="genre" class="block text-sm titillium-web-semibold">Genre</label>
           <select id="genre" v-model="preferences.genre" class="text-dark-primary mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            <option disabled value="">Select a genre</option>
+            <option value="">Select a genre</option>
             <option v-for="genre in uniqueGenres" :key="genre">{{ genre }}</option>
           </select>
         </div>
         <div>
-          <label for="status" class="block text-sm font-medium text-gray-700">Status in Collection</label>
+          <label for="status" class="block text-sm titillium-web-semibold">Status in Collection</label>
           <select id="status" v-model="preferences.status" class="text-dark-primary mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            <option disabled value="">Select status</option>
+            <option value="">Select status</option>
             <option v-for="status in uniqueStatuses" :key="status">{{ status }}</option>
           </select>
         </div>
@@ -26,20 +37,27 @@
           <button type="submit" class="hover:scale-105 transition-all duration-500 cursor-pointer mx-auto w-full md:w-1/2 mt-5 shadow-md py-2 px-4 rounded focus:outline-none focus:shadow-outline border-solid border-2 border-light-accent dark:border-dark-accent bg-light-accent dark:bg-dark-accent dark:text-dark-primary titillium-web-semibold">Recommend a Game</button>
         </div>
       </form>
-      <div class="mt-4 p-4 min-h-[652px]" v-if="isLoadingImage">
+      <div v-if="isLoadingImage" class="mt-4 p-4 min-h-[652px]">
         <clip-loader color="#14FFEB" size="90px"></clip-loader>
       </div>
       <div v-else class="flex justify-center">
-      <div v-if="!recommendedGame">
+      <div v-if="!recommendedGame" class="w-full absolute mt-5">
         <p class="text-xl text-center">{{ errorMessage }}</p>
       </div>
       <div ref="recommendedGameDiv" :class="recommendedGame ? 'visible' : 'invisible'" class="min-h-[652px] lg:w-1/3 md:w-1/2 w-full mt-4 p-4 border rounded flex flex-col items-center bg-light-primary dark:bg-dark-primary opacity-95">
         <p class="text-xl text-center">{{ recommendationText }}</p>
-        <img class="max-w-[300px]" :src="recommendedGameImageUrl ? recommendedGameImageUrl : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1699694058/no_cover_img_t5agly.jpg'"/>
+        <img class="max-w-[300px]" :src="recommendedGameImageUrl ? recommendedGameImageUrl : 'https://res.cloudinary.com/ddv5jvvvg/image/upload/v1719104953/no_cover_img_t5agly_c_crop_w_821_tlxlxx.jpg'"/>
         <p class="text-3xl titillium-web-bold text-center">{{ recommendedGame ? recommendedGame.game_name : ''}}</p>
         <button @click="ignoreGame(recommendedGame.game_name)" class="mt-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">{{ ignoreButtonText }}</button>
       </div>
       </div>
+    </div>
+    <div v-else>
+      <h1 class="titillium-web-bold text-light-text dark:text-dark-text text-4xl text-center pt-16">Hey!</h1>
+    <p class="titillium-web-semibold text-light-text dark:text-dark-text text-xl text-center mt-2">You're not signed in! 
+      <router-link to="/login"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">Log in</span></router-link>, or 
+      <router-link to="/signup"><span class="underline text-light-accent dark:text-dark-accent hover:text-light-primary dark:hover:text-dark-primary">create an account</span></router-link>
+      to get game recommendations!</p>
     </div>
   </template>
 
@@ -70,7 +88,7 @@
 // 	Example: Game w/ Highest Steam Review Score in Your Most Played Genre on Your Least Favorite Platform
 // 	Example: Game w/ Shortest Playtime in Your Backlog
 
-import { ref, computed, watchEffect , reactive, nextTick } from 'vue';
+import { ref, computed, watchEffect , reactive, nextTick, onMounted } from 'vue';
 import { getDatabase, ref as dbRef, get } from 'firebase/database';
 import { store } from '../store.js';
 import { fetchGameDetailsById, fetchGameImage } from '../utils/utils.js'
@@ -82,6 +100,10 @@ const preferences = ref({
   status: ''
 });
 
+const scanningText = ref('Scanning Your Collection...'.split(''));
+const isCollectionLoaded = ref(false)
+const activeIndex = ref(0);
+const progress = ref(0);
 const recommendedGame = ref(null);
 const recommendedGameImageUrl = ref(null);
 const recommendedGameDiv = ref(null);
@@ -95,6 +117,8 @@ const selectFunction = ref()
 const selectedFunction = ref('');
 const errorMessage = ref ('')
 const RATE_LIMIT_DELAY = 275;
+
+const progressWidth = computed(() => `${Math.floor(progress.value)}%`);
 
 const uniquePlatforms = computed(() => {
   const platforms = new Set();
@@ -146,7 +170,7 @@ const filteredGames = computed(() => {
     const isIgnored = ignoredGames.value.includes(game.game_name);
     return !isIgnored &&
            (!preferences.value.platform || game.platform.abbreviation === preferences.value.platform) &&
-           (!preferences.value.genre || game.genres[0].name === preferences.value.genre) &&
+           (!preferences.value.genre || game.genre === preferences.value.genre) &&
            (!preferences.value.status || game.game_status === preferences.value.status);
   });
 
@@ -194,6 +218,21 @@ if (savedGameDetails) {
   Object.assign(mergedGameDetails, JSON.parse(savedGameDetails));
 }
 
+
+function startBouncingText() {
+  setInterval(() => {
+    activeIndex.value = (activeIndex.value + 1) % scanningText.value.length;
+  }, 250); // Change active letter every 200ms
+}
+
+onMounted(() => {
+  startBouncingText();
+});
+
+onMounted(async () => {
+    await updateGameDetails();
+});
+
 watchEffect(async () => {
   if (store.userData.game_collection) {
     await updateGameDetails();
@@ -238,6 +277,7 @@ const MAX_RETRIES = 5;
 let retryCount = 0
 
 async function setRecommendedGame(game) {
+  isLoadingImage.value = true;
 
   if (!game && retryCount < MAX_RETRIES) {
     // Check if a game was successfully set
@@ -251,13 +291,13 @@ async function setRecommendedGame(game) {
     recommendedGame.value = null;
     recommendationText.value = ""
     errorMessage.value = "No Games Found With the Following Filters, Please Try Again!"
+    isLoadingImage.value = false;
     retryCount = 0
     return
   }
    if (game) {
     recommendedGame.value = game;
     recommendationText.value = generateRecommendationMessage();
-    isLoadingImage.value = true;
     recommendedGameImageUrl.value = await fetchGameImage(game.id, game.game_name).finally(() => {
     isLoadingImage.value = false;
   });
@@ -298,9 +338,9 @@ function applyCommonFilters(games) {
   console.log(formattedStatus)
 
   let filteredGames = games.filter(game => {
-    return (!preferences.value.platform || game.platform.abbreviation === preferences.value.platform) &&
-           (!preferences.value.genre || game.genres[0].name === preferences.value.genre) &&
-           (!preferences.value.status || game.game_status === formattedStatus);
+    return ((!preferences.value.platform || preferences.value.platform === "" )|| game.platform.abbreviation === preferences.value.platform) &&
+           ((!preferences.value.genre || preferences.value.genre === "") || game.genre === preferences.value.genre) &&
+           ((!preferences.value.status || preferences.value.status === "") || game.game_status === formattedStatus);
   });
 
   filteredGames = filteredGames.filter(game => !ignoredGames.value.includes(game.game_name));
@@ -322,7 +362,7 @@ function applyRandomFilters(games) {
   appliedFilters.value = [];
 
   // Add filter functions based on the preferences
-  if (!preferences.value.genre) {
+  if (!preferences.value.genre || preferences.value.genre === "") {
     genreFilters.push({
       filter: games => games.filter(game => (game.genres?.[0]?.name ?? null) === getFavoriteGenre(games)),
       message: 'Favorite Genre'
@@ -332,7 +372,7 @@ function applyRandomFilters(games) {
       message: 'Least Played Genre'
     });
   }
-  if (!preferences.value.platform) {
+  if (!preferences.value.platform || preferences.value.platform === "") {
     platformFilters.push({
       filter: games => games.filter(game => game.platform.abbreviation === getFavoritePlatform(games)),
       message: 'Favorite Platform'
@@ -342,7 +382,7 @@ function applyRandomFilters(games) {
       message: 'Least Played Platform'
     });
   }
-  if (!preferences.value.status) {
+  if (!preferences.value.status || preferences.value.status === "") {
     statusFilters.push({
       filter: games => getStatusFilter('backlog'),
       message: 'Backlog'
@@ -600,7 +640,7 @@ async function fetchLongestFullCompletion() {
 }
 
 function getStatusFilter(status) {
-  return Object.values(mergedGameDetails).filter(game => game.game_status === status);
+  return applyCommonFilters(Object.values(mergedGameDetails)).filter(game => game.game_status === status);
 }
 
 function getFavoriteGenre() {
@@ -761,22 +801,36 @@ async function updateGameDetails() {
     }
   }
 
+  const totalOperations = newGames.length + updatedGames.length + deletedGames.length;
+  let completedOperations = 0;
+
   // Step 4: Fetch Details for New/Updated Games
   for (const gameId of newGames) {
     await fetchAndMergeGameDetails(gameId, latestFirebaseData[gameId]);
+    completedOperations++;
+    updateProgress(completedOperations, totalOperations);
   }
 
   for (const gameId of updatedGames) {
     await fetchAndMergeGameDetails(gameId, latestFirebaseData[gameId]);
+    completedOperations++;
+    updateProgress(completedOperations, totalOperations);
   }
 
   // Step 5: Remove Deleted Games
   for (const gameId of deletedGames) {
     delete mergedGameDetails[gameId];
+    completedOperations++;
+    updateProgress(completedOperations, totalOperations);
   }
 
   // Step 6: Save Updated Data to Local Storage
   localStorage.setItem('mergedGameDetails', JSON.stringify(mergedGameDetails));
+  isCollectionLoaded.value = true;
+}
+
+function updateProgress(completedOperations, totalOperations) {
+  progress.value = Math.min(100, Math.floor((completedOperations / totalOperations) * 100));
 }
 
 function delay(ms) {
@@ -799,3 +853,26 @@ async function fetchHltbData(gameName) {
     }
 }
 </script>
+
+<style scoped>
+.bouncing-text span {
+  display: inline-block;
+}
+
+.bouncing {
+  animation: bounce 0.6s cubic-bezier(0.25, 2, 0.5, 1) infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.progress {
+  transition: width 0.4s ease;
+}
+</style>

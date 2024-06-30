@@ -99,14 +99,25 @@ export const getGameData = functions.https.onRequest(async (request, response) =
         'Authorization': `Bearer ${twitchAccessToken}`,
       };
 
-      const userQuery = request.query.query;
+      const userQuery = (request.query.query as string).replace(/[®™©]/g, '');
       const searchLimit = request.query.limit ? request.query.limit : 1;
 
-      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, total_rating, summary, genres.name; limit ${searchLimit}; search "${userQuery}"; where category = 0 & platforms != null & first_release_date != null;`;
+      const requestBody = `fields name, platforms.abbreviation, platforms.name, first_release_date, total_rating, summary, genres.name; limit ${searchLimit}; search "${userQuery}"; where platforms != null;`;
+
+      // Log the request details
+      console.log('Request Body:', requestBody);
+      console.log('Headers:', headers);
   
       const igdbResponse = await axios.post(igdbApiUrl, requestBody, { headers });
+
+       // Log the response from IGDB
+       console.log('IGDB Response:', igdbResponse.data);
   
-      response.json(igdbResponse.data);
+       if (!igdbResponse.data || igdbResponse.data.length === 0) {
+        response.status(404).json({ error: 'No results found for the given query.' });
+      } else {
+        response.json(igdbResponse.data);
+      }
     })
     } catch (error) {
       console.error('Error obtaining IGDB data:', error);

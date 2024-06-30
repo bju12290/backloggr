@@ -5,10 +5,9 @@ const currentPath = router.currentRoute.value.path;
 
 export const store = reactive({
   navigation: [
-    { name: 'Home', href: '/', current: false },
     { name: 'Collection', href: '/collectionmanager', current: false },
+    { name: 'Recommender', href: '/recommender', current: false },
     { name: 'Search', href: '/search', current: false },
-    // ...other navigation items
   ],
     signedIn: false,
     setSignedIn(status) {

@@ -63,6 +63,7 @@ export default {
           if (this.$refs.notificationPopup) {
                 this.$refs.notificationPopup.show(); 
             }
+          this.$router.push({ name: 'collection-manager' });
         })
         .catch((error) => {
           console.error('Error sending email verification:', error.message);
@@ -115,7 +116,7 @@ export default {
             <input v-model="password" @input="handlePass" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
             </div>
             <div class="flex items-center justify-evenly">
-            <button @click="handleSignUp" class="bg-light-primary dark:bg-dark-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            <button @click="handleSignUp" class="bg-light-primary dark:bg-dark-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:scale-105 transition-all duration-500" type="button">
                 Sign Up
             </button>
             <RouterLink to="/login" class="inline-block align-baseline font-bold text-sm text-light-accent dark:text-dark-accent">

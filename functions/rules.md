@@ -19,7 +19,7 @@
           // A user can write only their own username entry
           ".write": "$uid === auth.uid",
           // Prevent a user from changing their UID to someone else's username
-          ".validate": "newData.isString() && (!data.exists() || data.val() === newData.val())"
+          ".validate": "newData.isString() && (!data.exists() || data.val() === newData.val() || auth.uid == $uid)"
         }
       }
     }
