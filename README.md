@@ -38,17 +38,7 @@ Feel free to contact via email!
 
  #### Known Issues
 
- - Steam Library Importing Flow is Not User Friendly
- - If you find any other issues please contact me!
-
- #### Future Improvements
- - Game Recommendations Based on Statistics, User Interests, Preferences, Etc.
- - Multi-Selecting and Bulk Editing Games in the Game Collection
- - Import and Export Game Collection From/To CSV/Excel Spreadsheet
- - List View and Cover View in Collection Manager
- - Organize Games Into Folders and Subfolders
- - A Page Dedicated to Compiling User Statistics
- - Steam Library Import Moved to Backend (So user can do what they want while it imports)
+ - No Known issues at this time! If you find any other issues please contact me!
 
 
 
